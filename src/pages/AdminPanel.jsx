@@ -425,7 +425,15 @@ const AdminDashboard = () => {
         setEvents([...events, { ...newItem, registrations: 0 }])
         toast.success('Event added successfully')
       } else if (activeTab === 'communities') {
-        setCommunities([...communities, { ...newItem, members: 0, events: 0 }])
+        setCommunities([
+          ...communities,
+          {
+            ...newItem,
+            members: 0,
+            events: 0,
+            created: new Date().toISOString().split('T')[0]
+          }
+        ])
         toast.success('Community added successfully')
       }
       
@@ -1787,6 +1795,46 @@ const AdminDashboard = () => {
                       <div>
                         <p className="text-sm text-gray-500">Price</p>
                         <p className="font-medium text-gray-900">{currentItem.price}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Description</p>
+                      <p className="text-gray-700">{currentItem.description}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'communities' && (
+                  <div className="space-y-4">
+                    <h4 className="text-2xl font-bold text-gray-900">{currentItem.name}</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-500">Category</p>
+                        <p className="font-medium text-gray-900">{currentItem.category}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Status</p>
+                        <p className="font-medium text-gray-900">{currentItem.status}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Community Lead</p>
+                        <p className="font-medium text-gray-900">{currentItem.lead}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Contact</p>
+                        <p className="font-medium text-gray-900">{currentItem.contact}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Members</p>
+                        <p className="font-medium text-gray-900">{currentItem.members?.toLocaleString?.() ?? 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Events</p>
+                        <p className="font-medium text-gray-900">{currentItem.events ?? 0}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-sm text-gray-500">Created</p>
+                        <p className="font-medium text-gray-900">{currentItem.created || '—'}</p>
                       </div>
                     </div>
                     <div>
