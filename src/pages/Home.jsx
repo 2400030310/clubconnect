@@ -847,7 +847,7 @@ const Home = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-6xl md:text-8xl font-black text-white mb-6">
-              Desi{' '}
+              Student{' '}
               <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
                 Success Stories
               </span>
