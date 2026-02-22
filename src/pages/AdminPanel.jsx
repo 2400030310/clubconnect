@@ -1371,7 +1371,7 @@ const AdminDashboard = () => {
                     className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg flex items-center gap-2 hover:shadow-md"
                   >
                     <FiPlus className="w-4 h-4" />
-                    New Community
+                    Add Community
                   </button>
                 </div>
               </div>
@@ -1808,7 +1808,11 @@ const AdminDashboard = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gray-900">
-                    {showAddModal ? 'Add New' : 'Edit'} {activeTab === 'users' ? 'User' : activeTab === 'events' ? 'Event' : 'Community'}
+                    {showAddModal
+                      ? activeTab === 'communities'
+                        ? 'Add Community'
+                        : `Add New ${activeTab === 'users' ? 'User' : 'Event'}`
+                      : `Edit ${activeTab === 'users' ? 'User' : activeTab === 'events' ? 'Event' : 'Community'}`}
                   </h3>
                   <button
                     onClick={() => {
