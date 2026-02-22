@@ -392,6 +392,22 @@ const AdminDashboard = () => {
   }
 
   const handleSaveAdd = () => {
+    if (activeTab === 'communities') {
+      const requiredFields = [
+        { key: 'name', label: 'Community name' },
+        { key: 'category', label: 'Category' },
+        { key: 'lead', label: 'Community lead' },
+        { key: 'contact', label: 'Contact' },
+        { key: 'description', label: 'Description' }
+      ]
+
+      const missingField = requiredFields.find(({ key }) => !formData[key]?.toString().trim())
+      if (missingField) {
+        toast.error(`${missingField.label} is required`)
+        return
+      }
+    }
+
     setIsLoading(true)
     setTimeout(() => {
       const newItem = {
@@ -1957,6 +1973,79 @@ const AdminDashboard = () => {
                           placeholder="Enter location"
                         />
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea
+                          value={formData.description}
+                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          rows="3"
+                          className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400"
+                          placeholder="Enter description"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {activeTab === 'communities' && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Community Name</label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400"
+                          placeholder="Enter community name"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                          <input
+                            type="text"
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400"
+                            placeholder="Enter category"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                          <select
+                            value={formData.status}
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
+                          >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Community Lead</label>
+                          <input
+                            type="text"
+                            value={formData.lead}
+                            onChange={(e) => setFormData({ ...formData, lead: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400"
+                            placeholder="Enter lead name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                          <input
+                            type="text"
+                            value={formData.contact}
+                            onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400"
+                            placeholder="Enter contact"
+                          />
+                        </div>
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea
