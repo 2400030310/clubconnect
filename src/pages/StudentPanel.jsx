@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   FiCalendar, 
@@ -41,6 +41,7 @@ const StudentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
+  const notificationsSectionRef = useRef(null)
   
   // ===== NEW STATE FOR BULK SELECTION =====
   const [selectedActivities, setSelectedActivities] = useState([])
@@ -477,12 +478,29 @@ const StudentDashboard = () => {
     navigate('/')
   }
 
+  const unreadNotificationsCount = notifications.filter(n => !n.read).length
+
   const markAsRead = (id) => {
     setNotifications(prev =>
       prev.map(notif =>
         notif.id === id ? { ...notif, read: true } : notif
       )
     )
+  }
+
+  const openNotifications = () => {
+    notificationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleViewAllNotifications = () => {
+    openNotifications()
+    if (unreadNotificationsCount === 0) {
+      toast('No new notifications')
+      return
+    }
+
+    setNotifications(prev => prev.map(notif => ({ ...notif, read: true })))
+    toast.success('All notifications marked as read')
   }
 
   const handleRegister = (eventId) => {
@@ -601,9 +619,13 @@ const StudentDashboard = () => {
             <div className="flex items-center gap-4">
               {/* Notifications */}
               <div className="relative">
-                <button className="p-2 hover:bg-purple-50 rounded-full transition-colors relative">
+                <button
+                  onClick={openNotifications}
+                  className="p-2 hover:bg-purple-50 rounded-full transition-colors relative"
+                  title="Open notifications"
+                >
                   <FiBell className="w-5 h-5 text-gray-600" />
-                  {notifications.filter(n => !n.read).length > 0 && (
+                  {unreadNotificationsCount > 0 && (
                     <span className="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full" />
                   )}
                 </button>
@@ -984,15 +1006,16 @@ const StudentDashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
               className="bg-white rounded-2xl shadow-xl p-6"
+              ref={notificationsSectionRef}
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                   <FiBell className="text-purple-600" />
                   Notifications
                 </h2>
-                {notifications.filter(n => !n.read).length > 0 && (
+                {unreadNotificationsCount > 0 && (
                   <span className="bg-pink-100 text-pink-600 text-xs px-2 py-1 rounded-full">
-                    {notifications.filter(n => !n.read).length} new
+                    {unreadNotificationsCount} new
                   </span>
                 )}
               </div>
@@ -1027,7 +1050,10 @@ const StudentDashboard = () => {
                 ))}
               </div>
 
-              <button className="w-full mt-4 text-sm text-purple-600 hover:text-purple-700 font-medium text-center">
+              <button
+                onClick={handleViewAllNotifications}
+                className="w-full mt-4 text-sm text-purple-600 hover:text-purple-700 font-medium text-center"
+              >
                 View All Notifications
               </button>
             </motion.div>
