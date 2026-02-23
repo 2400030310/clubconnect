@@ -84,13 +84,6 @@ const Home = () => {
       stats: '0.5s response time'
     },
     {
-      icon: <FiGlobe className="w-8 h-8" />,
-      title: 'Pan-India Network',
-      description: 'Connect with students across 28 states',
-      gradient: 'from-pink-500 to-purple-500',
-      stats: '500+ colleges'
-    },
-    {
       icon: <FiTrendingUp className="w-8 h-8" />,
       title: 'Placement Assistance',
       description: 'Track your growth with AI insights',
@@ -171,10 +164,10 @@ const Home = () => {
 
   const events = [
     {
-      title: 'IIT Tech Fest 2024',
+      title: 'KL University Tech Fest 2024',
       date: 'March 15-17, 2024',
       time: '10:00 AM',
-      location: 'IIT Bombay, Mumbai',
+      location: 'Guntur',
       attendees: 8500,
       image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format',
       category: 'Technology',
@@ -185,7 +178,7 @@ const Home = () => {
       title: 'Sunburn Music Festival',
       date: 'April 5-7, 2024',
       time: '4:00 PM',
-      location: 'Goa',
+      location: 'Guntur',
       attendees: 25000,
       image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&auto=format',
       category: 'Music',
@@ -196,7 +189,7 @@ const Home = () => {
       title: 'AI & Data Science Summit',
       date: 'April 20, 2024',
       time: '9:00 AM',
-      location: 'Bengaluru',
+      location: 'Guntur',
       attendees: 4200,
       image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&auto=format',
       category: 'AI',
@@ -205,17 +198,10 @@ const Home = () => {
     }
   ]
 
-  const stats = [
-    { value: '50,000+', label: 'Active Students', icon: '🇮🇳', change: '+156%' },
-    { value: '500+', label: 'Colleges', icon: '🎓', change: '+45%' },
-    { value: '1000+', label: 'Events/Year', icon: '📅', change: '+89%' },
-    { value: '₹25L+', label: 'Highest Package', icon: '💰', change: '+234%' }
-  ]
-
   const testimonials = [
     {
       name: 'Priya Sharma',
-      role: 'IIT Delhi, CSE',
+      role: 'KL University, CSE',
       image: 'https://images.unsplash.com/photo-1494790108777-847fd61a7487?w=200&auto=format',
       quote: 'ClubConnect helped me prepare for placements. Got placed at Microsoft with ₹45L package!',
       rating: 5,
@@ -223,7 +209,7 @@ const Home = () => {
     },
     {
       name: 'Rahul Verma',
-      role: 'IIM Ahmedabad',
+      role: 'KL University, MBA',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format',
       quote: 'Started my fintech startup with co-founders I met here. Now valued at ₹100Cr!',
       rating: 5,
@@ -231,7 +217,7 @@ const Home = () => {
     },
     {
       name: 'Anjali Patel',
-      role: 'NID Ahmedabad',
+      role: 'KL University, Design',
       image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&auto=format',
       quote: 'Won multiple design awards through competitions listed on this platform.',
       rating: 5,
@@ -319,11 +305,8 @@ const Home = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="relative z-10">
-              <span className="text-3xl font-black tracking-tight">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Club
-                </span>
-                <span className="text-gray-900">Connect</span>
+              <span className="text-3xl font-black tracking-tight text-black">
+                ClubConnect
               </span>
               <span className="ml-2 text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">🇮🇳</span>
             </Link>
@@ -488,7 +471,7 @@ const Home = () => {
               >
                 🇮🇳
               </motion.span>
-              India's Premier Student Platform • 50,000+ Visionaries • 500+ Colleges • 1000+ Events
+              India's Premier Student Platform
               <motion.span
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -535,29 +518,6 @@ const Home = () => {
               </Link>
             </motion.div>
 
-            {/* Stats Cards */}
-            <motion.div 
-              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            >
-              {stats.map((stat, index) => (
-                <motion.div 
-                  key={index}
-                  className="group relative bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer overflow-hidden"
-                  whileHover={{ scale: 1.1, y: -10 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative z-10">
-                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">{stat.icon}</div>
-                    <div className="text-3xl md:text-4xl font-bold text-white mb-1 font-mono">{stat.value}</div>
-                    <div className="text-sm text-white/80 mb-2 tracking-wide uppercase">{stat.label}</div>
-                    <div className="text-xs font-semibold text-pink-300">{stat.change}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </div>
         </motion.div>
 
@@ -930,10 +890,6 @@ const Home = () => {
               Ready to Make History?
             </h2>
             
-            <p className="text-2xl text-white/90 mb-12 max-w-2xl mx-auto font-light">
-              Join 50,000+ students who've already transformed their college experience
-            </p>
-            
             <Link to="/register">
               <motion.button 
                 className="group relative px-16 py-8 bg-white text-purple-900 font-black rounded-3xl text-3xl shadow-2xl overflow-hidden"
@@ -948,9 +904,6 @@ const Home = () => {
               </motion.button>
             </Link>
             
-            <p className="text-white/80 mt-8 text-lg">
-              ✨ Free for all Indian students • Join the revolution today ✨
-            </p>
           </motion.div>
         </div>
       </section>

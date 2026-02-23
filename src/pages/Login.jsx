@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import toast from 'react-hot-toast'
 import { 
   FiMail, 
   FiLock, 
@@ -8,7 +9,8 @@ import {
   FiEye, 
   FiEyeOff,
   FiUser,
-  FiShield
+  FiShield,
+  FiAlertCircle
 } from 'react-icons/fi'
 import { useAuth } from '../hooks/useAuth'
 
@@ -21,8 +23,35 @@ const Login = () => {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const { login } = useAuth()
   const navigate = useNavigate()
+
+  const validateForm = () => {
+    setError('')
+    
+    if (!formData.email.trim()) {
+      setError('Email is required')
+      return false
+    }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address')
+      return false
+    }
+    
+    if (!formData.password) {
+      setError('Password is required')
+      return false
+    }
+    
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return false
+    }
+    
+    return true
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -30,21 +59,44 @@ const Login = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))
+    setError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setIsLoading(true)
     
-    // Simulate API call based on user type
-    setTimeout(() => {
-      setIsLoading(false)
-      if (formData.userType === 'admin') {
-        navigate('/admin/dashboard')
+    try {
+      const result = await login(formData.email.trim(), formData.password.trim(), formData.userType)
+      
+      if (result && result.success) {
+        toast.success(`Welcome back! Redirecting to ${formData.userType} dashboard...`)
+        
+        // Redirect based on user type
+        setTimeout(() => {
+          if (formData.userType === 'admin') {
+            navigate('/admin/dashboard')
+          } else {
+            navigate('/student/dashboard')
+          }
+        }, 800)
       } else {
-        navigate('/student/dashboard')
+        const errorMsg = result?.error || 'Login failed. Please try again.'
+        setError(errorMsg)
+        toast.error(errorMsg)
       }
-    }, 1500)
+    } catch (err) {
+      console.error('Submit error:', err)
+      setError('An error occurred. Please try again.')
+      toast.error('An error occurred')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -113,7 +165,7 @@ const Login = () => {
               </div>
               <div>
                 <p className="font-medium text-gray-900">Sarah Johnson</p>
-                <p className="text-sm text-gray-500">Student at IIT Delhi</p>
+                <p className="text-sm text-gray-500">Student at KL University</p>
               </div>
             </div>
           </motion.div>
@@ -210,6 +262,18 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm flex items-start gap-2"
+              >
+                <FiAlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-red-700">{error}</p>
+              </motion.div>
+            )}
+
             {/* Demo Credentials Hint */}
             <div className="bg-purple-50 rounded-lg p-3 text-sm">
               <p className="text-purple-700 font-medium mb-1">Demo Credentials:</p>
@@ -223,7 +287,7 @@ const Login = () => {
                   <span className="text-gray-600 ml-1">admin@example.com</span>
                 </div>
                 <div className="col-span-2 text-purple-600 font-medium">
-                  Password: any password (demo mode)
+                  Password: password123
                 </div>
               </div>
             </div>

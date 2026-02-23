@@ -23,28 +23,62 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password, type) => {
     try {
       setLoading(true)
-      // Mock API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 1000))
       
-      // Mock user data
-      const userData = {
-        id: 1,
-        name: email.split('@')[0],
-        email,
-        avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=6366f1&color=fff&size=128`,
-        role: type
+      // Trim whitespace
+      const trimmedEmail = email.trim().toLowerCase()
+      const trimmedPassword = password.trim()
+      
+      // Validation
+      if (!trimmedEmail || !trimmedPassword || !type) {
+        return { success: false, error: 'Missing required fields' }
       }
       
-      setUser(userData)
-      setUserType(type)
-      localStorage.setItem('user', JSON.stringify(userData))
-      localStorage.setItem('userType', type)
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(trimmedEmail)) {
+        return { success: false, error: 'Invalid email format' }
+      }
       
-      toast.success(`Welcome back, ${userData.name}!`)
-      return { success: true }
+      // Password validation
+      if (trimmedPassword.length < 6) {
+        return { success: false, error: 'Password must be at least 6 characters' }
+      }
+      
+      // Mock API call - replace with actual API
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Mock demo credentials
+      const demoCredentials = {
+        'student@example.com': 'password123',
+        'admin@example.com': 'password123'
+      }
+      
+      // Check credentials (demo) - case insensitive for email
+      const storedPassword = demoCredentials[trimmedEmail]
+      if (storedPassword && storedPassword === trimmedPassword) {
+        // Mock user data
+        const userName = trimmedEmail.split('@')[0].charAt(0).toUpperCase() + trimmedEmail.split('@')[0].slice(1)
+        const userData = {
+          id: 1,
+          name: userName,
+          email: trimmedEmail,
+          avatar: `https://ui-avatars.com/api/?name=${userName}&background=6366f1&color=fff&size=128`,
+          role: type
+        }
+        
+        setUser(userData)
+        setUserType(type)
+        localStorage.setItem('user', JSON.stringify(userData))
+        localStorage.setItem('userType', type)
+        localStorage.setItem('rememberMe', true)
+        
+        return { success: true, user: userData }
+      } else {
+        return { success: false, error: 'Invalid email or password' }
+      }
     } catch (error) {
-      toast.error('Login failed. Please try again.')
-      return { success: false, error }
+      console.error('Login error:', error)
+      return { success: false, error: error.message || 'Login failed' }
     } finally {
       setLoading(false)
     }
@@ -53,14 +87,43 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true)
+      
+      // Validation
+      if (!userData.fullName || !userData.email || !userData.password) {
+        throw new Error('Missing required fields')
+      }
+      
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(userData.email)) {
+        throw new Error('Invalid email format')
+      }
+      
+      // Password validation
+      if (userData.password.length < 6) {
+        throw new Error('Password must be at least 6 characters')
+      }
+      
+      if (userData.password !== userData.confirmPassword) {
+        throw new Error('Passwords do not match')
+      }
+      
       // Mock API call - replace with actual API
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      toast.success('Registration successful! Please login.')
+      // Store registration data (in real app, send to backend)
+      const registrationData = {
+        ...userData,
+        createdAt: new Date().toISOString()
+      }
+      localStorage.setItem('registrations', JSON.stringify([
+        ...(JSON.parse(localStorage.getItem('registrations') || '[]')),
+        registrationData
+      ]))
+      
       return { success: true }
     } catch (error) {
-      toast.error('Registration failed. Please try again.')
-      return { success: false, error }
+      return { success: false, error: error.message || 'Registration failed' }
     } finally {
       setLoading(false)
     }

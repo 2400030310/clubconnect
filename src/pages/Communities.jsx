@@ -532,26 +532,6 @@ const Communities = () => {
               />
             </motion.div>
 
-            {/* Stats */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center justify-center gap-8 mt-8 text-white"
-            >
-              <div>
-                <span className="text-2xl font-bold">{communities.length}+</span>
-                <span className="text-purple-100 ml-2">Communities</span>
-              </div>
-              <div>
-                <span className="text-2xl font-bold">500K+</span>
-                <span className="text-purple-100 ml-2">Members</span>
-              </div>
-              <div>
-                <span className="text-2xl font-bold">15</span>
-                <span className="text-purple-100 ml-2">Categories</span>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>

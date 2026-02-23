@@ -13,6 +13,11 @@ const fallbackActivities = [
 const ActivityCatalog = () => {
   const { activities, loading, error, refetch } = useActivities()
   const list = activities.length ? activities : fallbackActivities
+  const [registeredActivities, setRegisteredActivities] = React.useState(() => {
+    return JSON.parse(localStorage.getItem('myRegistrations') || '[]')
+  })
+
+  const isRegistered = (activityId) => registeredActivities.some((item) => item.id === activityId)
 
   const handleRegister = async (activity) => {
     try {
@@ -22,9 +27,25 @@ const ActivityCatalog = () => {
       const saved = JSON.parse(localStorage.getItem('myRegistrations') || '[]')
       const alreadyRegistered = saved.some((item) => item.id === activity.id)
       if (!alreadyRegistered) {
-        localStorage.setItem('myRegistrations', JSON.stringify([...saved, activity]))
+        const updated = [...saved, activity]
+        localStorage.setItem('myRegistrations', JSON.stringify(updated))
+        setRegisteredActivities(updated)
       }
       toast.success(`Saved ${activity.title || activity.name} registration locally`)
+    } finally {
+      refetch()
+    }
+  }
+
+  const handleUnregister = async (activity) => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('myRegistrations') || '[]')
+      const updated = saved.filter((item) => item.id !== activity.id)
+      localStorage.setItem('myRegistrations', JSON.stringify(updated))
+      setRegisteredActivities(updated)
+      toast.success(`Unregistered from ${activity.title || activity.name}`)
+    } catch (err) {
+      toast.error('Failed to unregister')
     } finally {
       refetch()
     }
@@ -42,8 +63,12 @@ const ActivityCatalog = () => {
               <p className="font-medium text-foreground">{activity.title || activity.name || 'Untitled Activity'}</p>
               <p className="text-sm text-foreground">{activity.category || 'General'} • {activity.eventDate || activity.date || 'TBA'}</p>
             </div>
-            <Button size="sm" onClick={() => handleRegister(activity)}>
-              Register
+            <Button 
+              size="sm" 
+              onClick={() => isRegistered(activity.id) ? handleUnregister(activity) : handleRegister(activity)}
+              className={isRegistered(activity.id) ? 'bg-green-100 text-green-600 hover:bg-green-200' : ''}
+            >
+              {isRegistered(activity.id) ? 'Registered ✓' : 'Register'}
             </Button>
           </div>
         ))}

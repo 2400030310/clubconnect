@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 import { 
   FiUser, 
   FiMail, 
@@ -49,16 +50,7 @@ const Register = () => {
   const navigate = useNavigate()
 
   const institutions = [
-    'IIT Bombay',
-    'IIT Delhi',
-    'IIT Madras',
-    'IIT Kanpur',
-    'IIT Kharagpur',
-    'IIM Ahmedabad',
-    'IIM Bangalore',
-    'IIM Calcutta',
-    'Delhi University',
-    'Mumbai University',
+    'KL University',
     'Other'
   ]
 
@@ -109,30 +101,79 @@ const Register = () => {
     }))
   }
 
+  const validateForm = () => {
+    if (currentStep === 1) {
+      if (!formData.fullName.trim()) {
+        toast.error('Full name is required')
+        return false
+      }
+      if (!formData.email.trim()) {
+        toast.error('Email is required')
+        return false
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        toast.error('Please enter a valid email address')
+        return false
+      }
+      if (!formData.password) {
+        toast.error('Password is required')
+        return false
+      }
+      if (formData.password.length < 6) {
+        toast.error('Password must be at least 6 characters')
+        return false
+      }
+      if (formData.password !== formData.confirmPassword) {
+        toast.error('Passwords do not match')
+        return false
+      }
+    } else if (currentStep === 2) {
+      if (!formData.institution) {
+        toast.error('Please select an institution')
+        return false
+      }
+      if (!formData.city) {
+        toast.error('Please select a city')
+        return false
+      }
+    } else if (currentStep === 3) {
+      if (!formData.agreeTerms) {
+        toast.error('Please agree to the terms and conditions')
+        return false
+      }
+    }
+    return true
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { register } = require('../hooks/useAuth')()  // This will be called properly in component
+      // For now, we'll use the inline version
+      // Simulate API call and register
+      setTimeout(() => {
+        toast.success('Account created successfully!')
+        setIsLoading(false)
+        navigate('/login')
+      }, 1500)
+    } catch (err) {
+      toast.error('Registration failed. Please try again.')
       setIsLoading(false)
-      navigate('/login')
-    }, 1500)
+    }
   }
 
   const nextStep = () => {
-    if (currentStep === 1) {
-      // Validate step 1
-      if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-        alert('Please fill all required fields')
-        return
-      }
-      if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match')
-        return
-      }
+    if (!validateForm()) {
+      return
     }
-    setCurrentStep(2)
+    setCurrentStep(currentStep + 1)
   }
 
   const prevStep = () => {
@@ -201,7 +242,7 @@ const Register = () => {
               {
                 icon: '🏆',
                 title: 'Exclusive Events',
-                description: 'Attend IIT/IIM workshops and industry meetups'
+                description: 'Attend KL University workshops and industry meetups'
               }
             ].map((item, index) => (
               <motion.div
@@ -245,7 +286,7 @@ const Register = () => {
             </div>
             <div className="mt-3 flex items-center gap-2 text-sm text-gray-500">
               <FiAward className="text-purple-500" />
-              <span>Trusted by IITs, IIMs & NITs</span>
+              <span>Trusted by KL University</span>
             </div>
           </motion.div>
 
@@ -265,7 +306,7 @@ const Register = () => {
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-900">Priya Sharma</p>
-                <p className="text-xs text-gray-500">IIT Delhi, CSE</p>
+                <p className="text-xs text-gray-500">KL University, CSE</p>
               </div>
             </div>
           </motion.div>
