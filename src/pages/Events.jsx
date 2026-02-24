@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import { 
   FiCalendar, 
   FiUsers, 
@@ -35,6 +34,8 @@ const Events = () => {
   const [viewMode, setViewMode] = useState('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [bookmarked, setBookmarked] = useState([])
+  const [showEventDetailsModal, setShowEventDetailsModal] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState(null)
 
   // All Events Data - Comprehensive list with Indian context
   const allEvents = [
@@ -204,6 +205,7 @@ const Events = () => {
       featured: false,
       organizer: 'KL University',
       description: 'Annual sports competition hosted by KL University featuring multiple disciplines.',
+      speakers: ['University Sports Council', 'National Referees Panel'],
       highlights: ['Athletics', 'Swimming', 'Basketball', 'Football', 'Tennis']
     },
     {
@@ -226,6 +228,7 @@ const Events = () => {
       featured: true,
       organizer: 'Procam International',
       description: 'India\'s largest marathon with full marathon, half marathon, and 10K runs.',
+      speakers: ['Marathon Race Directors', 'Elite Pacers Team'],
       highlights: ['Full Marathon', 'Half Marathon', '10K Run', 'Fun Run']
     },
 
@@ -299,6 +302,7 @@ const Events = () => {
       featured: true,
       organizer: 'Krafton',
       description: 'India\'s biggest BGMI tournament with ₹50L prize pool.',
+      artists: ['Pro Team Captains', 'Esports Casters'],
       highlights: ['Grand Finals', 'Cosplay', 'Merchandise', 'Meet & Greet']
     },
     {
@@ -321,6 +325,7 @@ const Events = () => {
       featured: false,
       organizer: 'Riot Games',
       description: 'Inter-college Valorant tournament with cash prizes.',
+      artists: ['Riot Tournament Staff', 'Esports Commentators'],
       highlights: ['Online Qualifiers', 'Live Stream', 'Cash Prizes']
     },
 
@@ -396,6 +401,7 @@ const Events = () => {
       featured: false,
       organizer: 'Patanjali',
       description: '3-day yoga and meditation retreat in the yoga capital of the world.',
+      speakers: ['Certified Yoga Trainers', 'Ayurveda Experts'],
       highlights: ['Yoga Sessions', 'Meditation', 'Ayurvedic Food', 'Ganga Aarti']
     }
   ]
@@ -467,6 +473,16 @@ const Events = () => {
     setSelectedCity('all')
     setSelectedPrice('all')
     setSelectedDate('all')
+  }
+
+  const openEventDetails = (event) => {
+    setSelectedEvent(event)
+    setShowEventDetailsModal(true)
+  }
+
+  const closeEventDetails = () => {
+    setShowEventDetailsModal(false)
+    setSelectedEvent(null)
   }
 
   return (
@@ -695,11 +711,12 @@ const Events = () => {
                             {event.registered} going
                           </span>
                         </div>
-                        <Link to={`/events/${event.id}`}>
-                          <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all">
-                            View Details
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => openEventDetails(event)}
+                          className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all"
+                        >
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -757,12 +774,13 @@ const Events = () => {
 
                       <div className="flex items-center justify-between">
                         <span className="text-xl font-bold text-purple-600">{event.price}</span>
-                        <Link to={`/events/${event.id}`}>
-                          <button className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg hover:shadow-md transition-all flex items-center gap-2">
-                            View Details
-                            <FiArrowRight className="w-4 h-4" />
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => openEventDetails(event)}
+                          className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg hover:shadow-md transition-all flex items-center gap-2"
+                        >
+                          View Details
+                          <FiArrowRight className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -831,6 +849,91 @@ const Events = () => {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {showEventDetailsModal && selectedEvent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={closeEventDetails}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={`bg-gradient-to-r ${selectedEvent.color} p-6 text-white`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-2xl font-bold">{selectedEvent.name}</h3>
+                    <p className="text-white/90 text-sm mt-1">{selectedEvent.category} • {selectedEvent.organizer}</p>
+                  </div>
+                  <button onClick={closeEventDetails} className="text-white/80 hover:text-white text-sm font-medium">Close</button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-5">
+                <p className="text-gray-700">{selectedEvent.description}</p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-500">Date</p>
+                    <p className="text-sm font-semibold text-gray-900">{selectedEvent.date}{selectedEvent.endDate ? ` - ${selectedEvent.endDate}` : ''}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-500">Time</p>
+                    <p className="text-sm font-semibold text-gray-900">{selectedEvent.time}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-500">Venue</p>
+                    <p className="text-sm font-semibold text-gray-900">{selectedEvent.venue}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-gray-500">Attendees</p>
+                    <p className="text-sm font-semibold text-gray-900">{selectedEvent.registered}/{selectedEvent.spots}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                    {selectedEvent.speakers ? 'Featured Speakers' : selectedEvent.artists ? 'Featured Artists' : selectedEvent.designers ? 'Featured Designers' : 'Featured Team'}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedEvent.speakers || selectedEvent.artists || selectedEvent.designers || []).map((person) => (
+                      <span key={person} className="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">{person}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">Highlights</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedEvent.highlights.map((highlight) => (
+                      <span key={highlight} className="text-xs bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full">{highlight}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={closeEventDetails}
+                    className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+                  >
+                    Close
+                  </button>
+                  <button className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md transition-all">
+                    Book Now
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

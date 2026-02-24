@@ -33,6 +33,7 @@ import {
   FiPlus,
   FiEye,
   FiDownload,
+  FiFileText,
   FiUpload,
   FiBarChart2,
   FiPieChart,
@@ -71,13 +72,14 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const notificationsRef = useRef(null)
-  const [selectedStudent, setSelectedStudent] = useState(null)
-  const [showParticipationModal, setShowParticipationModal] = useState(false)
-  const [participationView, setParticipationView] = useState('overview')
   const [dateRange, setDateRange] = useState('month')
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedDepartment, setSelectedDepartment] = useState('all')
   const [selectedRequest, setSelectedRequest] = useState(null)
   const [showRequestDetails, setShowRequestDetails] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [showRejectionModal, setShowRejectionModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState('csv')
+  const [showExportModal, setShowExportModal] = useState(false)
   const [filterType, setFilterType] = useState('all')
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'New user registered', read: false, time: '5 min ago' },
@@ -187,7 +189,7 @@ const AdminDashboard = () => {
     {
       id: 7,
       name: 'Admin User',
-      email: 'admin@kluniversity.ac.in',
+      email: 'admin@example.com',
       college: 'KL University',
       year: 'N/A',
       userType: 'admin',
@@ -199,6 +201,170 @@ const AdminDashboard = () => {
       bio: 'Platform administrator.'
     }
   ])
+
+  const userEventHistory = {
+    1: [
+      {
+        id: 'u1e1',
+        eventName: 'KL University Tech Fest 2024',
+        category: 'Technology',
+        date: '2024-03-15',
+        action: 'Participated',
+        role: 'Participant',
+        hours: 6,
+        certificate: true,
+        status: 'Completed'
+      },
+      {
+        id: 'u1e2',
+        eventName: 'AI & Robotics Hackathon',
+        category: 'Technology',
+        date: '2024-03-18',
+        action: 'Participated',
+        role: 'Team Member',
+        hours: 12,
+        certificate: true,
+        status: 'Completed'
+      },
+      {
+        id: 'u1e3',
+        eventName: 'Google Cloud Summit',
+        category: 'Technology',
+        date: '2024-04-05',
+        action: 'Registered',
+        role: 'Attendee',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      },
+      {
+        id: 'u1e4',
+        eventName: 'Startup India Pitch Fest',
+        category: 'Business',
+        date: '2024-05-02',
+        action: 'Registered',
+        role: 'Presenter',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      }
+    ],
+    2: [
+      {
+        id: 'u2e1',
+        eventName: 'Startup India Pitch Fest',
+        category: 'Business',
+        date: '2024-05-02',
+        action: 'Participated',
+        role: 'Pitch Presenter',
+        hours: 5,
+        certificate: true,
+        status: 'Completed'
+      },
+      {
+        id: 'u2e2',
+        eventName: 'Young Entrepreneurs Summit',
+        category: 'Business',
+        date: '2024-05-20',
+        action: 'Registered',
+        role: 'Delegate',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      },
+      {
+        id: 'u2e3',
+        eventName: 'Investment Banking Workshop',
+        category: 'Business',
+        date: '2024-06-05',
+        action: 'Registered',
+        role: 'Attendee',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      }
+    ],
+    3: [
+      {
+        id: 'u3e1',
+        eventName: 'Classical Music Concert',
+        category: 'Music',
+        date: '2024-04-12',
+        action: 'Participated',
+        role: 'Volunteer',
+        hours: 4,
+        certificate: false,
+        status: 'Completed'
+      }
+    ],
+    4: [
+      {
+        id: 'u4e1',
+        eventName: 'BGMI Pro League',
+        category: 'Gaming',
+        date: '2024-05-25',
+        action: 'Participated',
+        role: 'Player',
+        hours: 9,
+        certificate: true,
+        status: 'Completed'
+      },
+      {
+        id: 'u4e2',
+        eventName: 'Valorant Campus Clash',
+        category: 'Gaming',
+        date: '2024-06-15',
+        action: 'Registered',
+        role: 'Team Captain',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      }
+    ],
+    5: [
+      {
+        id: 'u5e1',
+        eventName: 'Jaipur Literature Festival',
+        category: 'Literary',
+        date: '2024-06-20',
+        action: 'Registered',
+        role: 'Participant',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      },
+      {
+        id: 'u5e2',
+        eventName: 'Bollywood Music Night',
+        category: 'Music',
+        date: '2024-03-25',
+        action: 'Participated',
+        role: 'Audience',
+        hours: 3,
+        certificate: false,
+        status: 'Completed'
+      }
+    ],
+    6: [
+      {
+        id: 'u6e1',
+        eventName: 'Inter-KL University Sports Meet',
+        category: 'Sports',
+        date: '2024-04-20',
+        action: 'Registered',
+        role: 'Athlete',
+        hours: 0,
+        certificate: false,
+        status: 'Upcoming'
+      }
+    ],
+    7: []
+  }
+
+  const getUserEventHistory = (userId) => {
+    const records = userEventHistory[userId] || []
+    return [...records].sort((a, b) => new Date(b.date) - new Date(a.date))
+  }
 
   // Mock Data - Events
   const [events, setEvents] = useState([
@@ -382,6 +548,90 @@ const AdminDashboard = () => {
       submittedDate: '2024-03-09',
       summary: 'New workshop proposal for design students',
       requestedBy: 'KL University Design Club'
+    }
+  ])
+
+  const [clubs, setClubs] = useState([
+    {
+      id: 1,
+      name: 'Coding Club',
+      description: 'Learn, code, innovate - Join the coding revolution',
+      longDescription: 'The Coding Club is a community of passionate programmers...',
+      category: 'Technical',
+      established: '2015',
+      memberCount: 250,
+      advisor: 'Dr. Ramesh Kumar',
+      email: 'codingclub@kluniversity.in',
+      social: {
+        instagram: '@codingclub_kl',
+        github: 'codingclub-kl'
+      },
+      image: '💻',
+      color: 'from-blue-500 to-purple-500',
+      status: 'active',
+      createdBy: 'student123',
+      createdAt: '2024-01-15',
+      members: [
+        { id: 101, name: 'Priya Sharma', role: 'President', joinedDate: '2024-01-20' },
+        { id: 102, name: 'Rahul Kumar', role: 'Member', joinedDate: '2024-02-01' }
+      ],
+      events: [1, 2],
+      pendingRequests: []
+    },
+    {
+      id: 2,
+      name: 'Music Club',
+      description: 'Explore your musical talents',
+      category: 'Cultural',
+      memberCount: 180,
+      advisor: 'Dr. Suman Rao',
+      email: 'musicclub@kluniversity.in',
+      image: '🎵',
+      color: 'from-pink-500 to-red-500',
+      status: 'active',
+      members: [],
+      events: [4, 5]
+    }
+  ])
+
+  const [clubRequests, setClubRequests] = useState([
+    {
+      id: 101,
+      clubName: 'Robotics Club',
+      description: 'A club for robotics and automation enthusiasts',
+      category: 'Technical',
+      proposedBy: 'Amit Patel',
+      studentId: 'STU001',
+      email: 'amit.p@kluniversity.in',
+      department: 'CSE',
+      year: '3rd Year',
+      proposedDate: '2024-03-10',
+      reason: 'To promote robotics education and participate in national competitions',
+      expectedMembers: 50,
+      facultyAdvisor: 'Dr. Venkatesh',
+      documents: ['proposal.pdf', 'budget.xlsx'],
+      status: 'pending',
+      priority: 'high',
+      comments: []
+    },
+    {
+      id: 102,
+      clubName: 'Photography Club',
+      description: 'Capture moments, create memories',
+      category: 'Arts',
+      proposedBy: 'Neha Singh',
+      studentId: 'STU002',
+      email: 'neha.s@kluniversity.in',
+      department: 'ECE',
+      year: '2nd Year',
+      proposedDate: '2024-03-12',
+      reason: 'Build a community of photography enthusiasts',
+      expectedMembers: 30,
+      facultyAdvisor: 'Prof. Sharma',
+      documents: ['proposal.pdf'],
+      status: 'pending',
+      priority: 'medium',
+      comments: []
     }
   ])
 
@@ -743,36 +993,51 @@ const AdminDashboard = () => {
     setShowDeleteModal(true)
   }
 
-  const handleViewStudentParticipation = (student) => {
-    setSelectedStudent(student)
-    setShowParticipationModal(true)
-  }
+  const handleApproveRequest = (requestId) => {
+    setClubRequests(prev => prev.map(req =>
+      req.id === requestId ? { ...req, status: 'approved' } : req
+    ))
 
-  const handleExportParticipationData = () => {
-    toast.success('Participation data exported successfully')
-  }
+    const approved = clubRequests.find(r => r.id === requestId)
+    if (!approved) return
 
-  const handleFilterByDateRange = (range) => {
-    setDateRange(range)
-    toast.success(`Filtered by ${range}`)
-  }
-
-  const handleFilterByCategory = (category) => {
-    setSelectedCategory(category)
-    toast.success(`Filtered by ${category} category`)
-  }
-
-  const getParticipationStats = () => {
-    const totalStudents = users.filter(u => u.userType === 'student').length
-    const participationRate = totalStudents
-      ? Math.round((participationData.activeParticipants / totalStudents) * 100)
-      : 0
-
-    return {
-      ...participationData,
-      totalStudents,
-      participationRate
+    const newClub = {
+      id: clubs.length + 1,
+      name: approved.clubName,
+      description: approved.description,
+      category: approved.category,
+      memberCount: 0,
+      advisor: approved.facultyAdvisor,
+      email: approved.email,
+      image: getCategoryIcon(approved.category),
+      color: 'from-purple-500 to-pink-500',
+      status: 'active',
+      createdBy: approved.studentId,
+      createdAt: new Date().toISOString().split('T')[0],
+      members: [],
+      events: []
     }
+
+    setClubs(prev => [...prev, newClub])
+    toast.success(`Club "${approved.clubName}" has been approved and created!`)
+  }
+
+  const handleRejectRequest = (requestId, reason) => {
+    setClubRequests(prev => prev.map(req =>
+      req.id === requestId ? { ...req, status: 'rejected', rejectionReason: reason } : req
+    ))
+    toast.error('Club request rejected')
+  }
+
+  const getCategoryIcon = (category) => {
+    const icons = {
+      Technical: '💻',
+      Cultural: '🎭',
+      Sports: '⚽',
+      Arts: '🎨',
+      Music: '🎵'
+    }
+    return icons[category] || '📚'
   }
 
   const getActiveEntityLabel = () => {
@@ -940,52 +1205,49 @@ const AdminDashboard = () => {
   ])
 
   const [participationData, setParticipationData] = useState({
-    totalRegistrations: 156,
-    activeParticipants: 89,
-    avgEventsPerStudent: 4.2,
-    completionRate: 78,
-    categoryStats: [
-      { category: 'Technology', registrations: 45, students: 32 },
-      { category: 'Music', registrations: 38, students: 28 },
-      { category: 'Sports', registrations: 42, students: 35 },
-      { category: 'Business', registrations: 31, students: 24 },
-      { category: 'Gaming', registrations: 28, students: 22 },
-      { category: 'Arts', registrations: 25, students: 19 },
-      { category: 'Health', registrations: 22, students: 18 }
-    ],
-    monthlyTrends: [
-      { month: 'Jan', registrations: 42 },
-      { month: 'Feb', registrations: 58 },
-      { month: 'Mar', registrations: 75 },
-      { month: 'Apr', registrations: 82 },
-      { month: 'May', registrations: 64 },
-      { month: 'Jun', registrations: 48 }
-    ],
-    topParticipants: [
-      { id: 1, name: 'Priya Sharma', events: 12, categories: ['Tech', 'Business'], lastActive: '2024-03-15' },
-      { id: 2, name: 'Rahul Verma', events: 10, categories: ['Sports', 'Gaming'], lastActive: '2024-03-14' },
-      { id: 3, name: 'Anjali Krishnan', events: 9, categories: ['Arts', 'Music'], lastActive: '2024-03-13' },
-      { id: 4, name: 'Vikram Reddy', events: 8, categories: ['Tech', 'Gaming'], lastActive: '2024-03-12' },
-      { id: 5, name: 'Neha Gupta', events: 7, categories: ['Literary', 'Arts'], lastActive: '2024-03-11' }
-    ],
-    recentRegistrations: [
-      { id: 101, student: 'Priya Sharma', event: 'AI & Robotics Hackathon', date: '2024-03-15', status: 'confirmed' },
-      { id: 102, student: 'Rahul Verma', event: 'BGMI Pro League', date: '2024-03-14', status: 'confirmed' },
-      { id: 103, student: 'Anjali Krishnan', event: 'Jaipur Literature Festival', date: '2024-03-13', status: 'confirmed' },
-      { id: 104, student: 'Vikram Reddy', event: 'KL University Tech Fest 2024', date: '2024-03-12', status: 'pending' },
-      { id: 105, student: 'Neha Gupta', event: 'Lakme Fashion Week', date: '2024-03-11', status: 'confirmed' },
-      { id: 106, student: 'Arjun Singh', event: 'Yoga & Wellness Retreat', date: '2024-03-10', status: 'cancelled' }
-    ]
+    clubs: {
+      totalMembers: 1250,
+      activeClubs: 15,
+      pendingRequests: 3,
+      monthlyGrowth: 12,
+      clubWiseParticipation: [
+        { name: 'Coding Club', members: 250, events: 8, participation: 85 },
+        { name: 'Music Club', members: 180, events: 6, participation: 78 },
+        { name: 'Sports Club', members: 320, events: 12, participation: 92 },
+        { name: 'Dance Club', members: 150, events: 5, participation: 88 }
+      ]
+    },
+    events: {
+      totalRegistrations: 3450,
+      completedEvents: 28,
+      upcomingEvents: 12,
+      avgAttendance: 76,
+      eventWiseParticipation: [
+        { name: 'Tech Fest 2024', registrations: 500, attended: 425, rate: 85 },
+        { name: 'Music Night', registrations: 300, attended: 280, rate: 93 },
+        { name: 'Sports Meet', registrations: 450, attended: 400, rate: 89 }
+      ]
+    },
+    students: {
+      totalActive: 2800,
+      participated: 1850,
+      participationRate: 66,
+      topParticipants: [
+        { name: 'Priya Sharma', activities: 12, clubs: 3, hours: 45 },
+        { name: 'Rahul Kumar', activities: 10, clubs: 2, hours: 38 },
+        { name: 'Neha Singh', activities: 8, clubs: 2, hours: 32 }
+      ]
+    }
   })
 
   const unreadNotificationsCount = notifications.filter(n => !n.read).length
-  const participationStats = getParticipationStats()
-  const participationCircle = 2 * Math.PI * 40
-  const participationStroke = (participationCircle * participationStats.participationRate) / 100
-  const participationOffset = participationCircle * 0.25
+  const filteredClubRequests = clubRequests.filter(request => {
+    if (selectedDepartment === 'all') return true
+    return request.department === selectedDepartment
+  })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-black [&_.text-gray-900]:text-black [&_.text-gray-800]:text-black [&_.text-gray-700]:text-black [&_.text-gray-600]:text-black [&_.text-gray-500]:text-black [&_.text-gray-400]:text-black [&_.hover\\:text-gray-800:hover]:text-black [&_.hover\\:text-gray-700:hover]:text-black [&_.hover\\:text-gray-600:hover]:text-black">
       {/* Top Navigation */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-6 py-3">
@@ -1063,7 +1325,7 @@ const AdminDashboard = () => {
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">Admin</p>
-                  <p className="text-xs text-gray-500">superadmin@kluniversity.ac.in</p>
+                  <p className="text-xs text-gray-500">admin@example.com</p>
                 </div>
                 <div className="w-9 h-9 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold">
                   A
@@ -1166,6 +1428,28 @@ const AdminDashboard = () => {
 
             <button
               onClick={() => {
+                setActiveTab('clubRequests')
+                setSelectedItems([])
+                setSelectMode(false)
+                setSearchTerm('')
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                activeTab === 'clubRequests'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <FiUsers className="w-5 h-5" />
+              <span className="font-medium">Club Requests</span>
+              {clubRequests.filter(r => r.status === 'pending').length > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {clubRequests.filter(r => r.status === 'pending').length}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => {
                 setActiveTab('participation')
                 setSelectedItems([])
                 setSelectMode(false)
@@ -1180,7 +1464,27 @@ const AdminDashboard = () => {
               <FiUsers className="w-5 h-5" />
               <span className="font-medium">Participation Tracking</span>
               <span className="ml-auto bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full">
-                {participationData.activeParticipants}
+                {participationData.students.participated}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('clubs')
+                setSelectedItems([])
+                setSelectMode(false)
+                setSearchTerm('')
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                activeTab === 'clubs'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <FiHeart className="w-5 h-5" />
+              <span className="font-medium">Manage Clubs</span>
+              <span className="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
+                {clubs.length}
               </span>
             </button>
 
@@ -1240,6 +1544,48 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 p-6 overflow-auto">
+          <div className="mb-6 border-b border-gray-200">
+            <div className="flex space-x-8 overflow-x-auto pb-1">
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${
+                  activeTab === 'overview' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'
+                }`}
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('clubRequests')}
+                className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${
+                  activeTab === 'clubRequests' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'
+                }`}
+              >
+                <FiUsers /> Club Requests
+                {clubRequests.filter(r => r.status === 'pending').length > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    {clubRequests.filter(r => r.status === 'pending').length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab('participation')}
+                className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${
+                  activeTab === 'participation' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'
+                }`}
+              >
+                <FiActivity /> Participation Tracking
+              </button>
+              <button
+                onClick={() => setActiveTab('clubs')}
+                className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${
+                  activeTab === 'clubs' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'
+                }`}
+              >
+                Manage Clubs
+              </button>
+            </div>
+          </div>
+
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
@@ -1590,14 +1936,22 @@ const AdminDashboard = () => {
                           <td className="px-6 py-4 text-sm text-gray-600">{user.joined}</td>
                           <td className="px-6 py-4">
                             <div className="flex flex-col gap-1">
+                              {(() => {
+                                const history = getUserEventHistory(user.id)
+                                const participated = history.filter(item => item.action === 'Participated').length
+                                const registered = history.filter(item => item.action === 'Registered').length
+                                const total = history.length || 1
+                                return (
+                                  <>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium text-gray-900">{user.activities}</span>
                                 <span className="text-xs text-gray-500">events</span>
                               </div>
+                              <p className="text-xs text-gray-500">{participated} participated • {registered} registered</p>
                               <div className="w-20 bg-gray-200 rounded-full h-1.5">
                                 <div 
                                   className="bg-gradient-to-r from-purple-600 to-pink-600 h-1.5 rounded-full"
-                                  style={{ width: `${(user.activities / 20) * 100}%` }}
+                                  style={{ width: `${Math.min(100, (history.length / total) * 100)}%` }}
                                 ></div>
                               </div>
                               <button
@@ -1606,6 +1960,9 @@ const AdminDashboard = () => {
                               >
                                 View Details
                               </button>
+                                  </>
+                                )
+                              })()}
                             </div>
                           </td>
                           <td className="px-6 py-4">
@@ -1901,363 +2258,429 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {activeTab === 'participation' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Student Participation Tracking</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setParticipationView('overview')}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                      participationView === 'overview'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                        : 'border border-gray-200 hover:bg-gray-50'
-                    }`}
+          {activeTab === 'clubRequests' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-sm text-gray-500">Pending Requests</p>
+                  <p className="text-3xl font-bold text-yellow-600">
+                    {clubRequests.filter(r => r.status === 'pending').length}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-sm text-gray-500">Approved</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {clubRequests.filter(r => r.status === 'approved').length}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-sm text-gray-500">Rejected</p>
+                  <p className="text-3xl font-bold text-red-600">
+                    {clubRequests.filter(r => r.status === 'rejected').length}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-sm text-gray-500">High Priority</p>
+                  <p className="text-3xl font-bold text-purple-600">
+                    {clubRequests.filter(r => r.priority === 'high' && r.status === 'pending').length}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-4 shadow-lg">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <FiFilter className="text-gray-400" />
+                    <span className="text-sm font-medium">Filter:</span>
+                  </div>
+                  <select className="px-3 py-2 border rounded-lg text-sm">
+                    <option>All Categories</option>
+                    <option>Technical</option>
+                    <option>Cultural</option>
+                    <option>Sports</option>
+                    <option>Arts</option>
+                  </select>
+                  <select className="px-3 py-2 border rounded-lg text-sm">
+                    <option>All Priorities</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                  <select
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    className="px-3 py-2 border rounded-lg text-sm"
                   >
-                    <FiBarChart2 className="w-4 h-4" />
-                    Overview
-                  </button>
-                  <button
-                    onClick={() => setParticipationView('details')}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                      participationView === 'details'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                        : 'border border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <FiList className="w-4 h-4" />
-                    Detailed View
-                  </button>
-                  <button
-                    onClick={() => setParticipationView('analytics')}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                      participationView === 'analytics'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                        : 'border border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <FiPieChart className="w-4 h-4" />
-                    Analytics
-                  </button>
-                  <button
-                    onClick={handleExportParticipationData}
-                    className="px-4 py-2 border border-gray-200 rounded-lg flex items-center gap-2 hover:bg-gray-50"
-                  >
-                    <FiDownload className="w-4 h-4" />
-                    Export
+                    <option value="all">All Departments</option>
+                    <option value="CSE">CSE</option>
+                    <option value="ECE">ECE</option>
+                    <option value="MECH">MECH</option>
+                    <option value="CIVIL">CIVIL</option>
+                  </select>
+                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm">
+                    Apply Filters
                   </button>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">Date Range:</span>
-                    <button
-                      onClick={() => handleFilterByDateRange('week')}
-                      className={`px-3 py-1 text-sm rounded-lg ${
-                        dateRange === 'week' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      This Week
-                    </button>
-                    <button
-                      onClick={() => handleFilterByDateRange('month')}
-                      className={`px-3 py-1 text-sm rounded-lg ${
-                        dateRange === 'month' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      This Month
-                    </button>
-                    <button
-                      onClick={() => handleFilterByDateRange('year')}
-                      className={`px-3 py-1 text-sm rounded-lg ${
-                        dateRange === 'year' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      This Year
-                    </button>
-                    <button
-                      onClick={() => handleFilterByDateRange('all')}
-                      className={`px-3 py-1 text-sm rounded-lg ${
-                        dateRange === 'all' ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      All Time
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 ml-auto">
-                    <span className="text-sm text-gray-500">Category:</span>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => handleFilterByCategory(e.target.value)}
-                      className="px-3 py-1 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 text-gray-900"
-                    >
-                      <option value="all" className="text-gray-900">All Categories</option>
-                      <option value="Technology" className="text-gray-900">Technology</option>
-                      <option value="Music" className="text-gray-900">Music</option>
-                      <option value="Sports" className="text-gray-900">Sports</option>
-                      <option value="Business" className="text-gray-900">Business</option>
-                      <option value="Gaming" className="text-gray-900">Gaming</option>
-                      <option value="Arts" className="text-gray-900">Arts</option>
-                      <option value="Health" className="text-gray-900">Health</option>
-                    </select>
-                  </div>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="p-6 border-b">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <FiUsers className="text-purple-600" />
+                    Club Formation Requests
+                  </h2>
+                </div>
+
+                <div className="divide-y">
+                  {filteredClubRequests.map((request) => (
+                    <div key={request.id} className="p-6 hover:bg-gray-50">
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold">{request.clubName}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              request.priority === 'high' ? 'bg-red-100 text-red-600' :
+                              request.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                              'bg-green-100 text-green-600'
+                            }`}>
+                              {request.priority.toUpperCase()} PRIORITY
+                            </span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              request.status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
+                              request.status === 'approved' ? 'bg-green-100 text-green-600' :
+                              'bg-red-100 text-red-600'
+                            }`}>
+                              {request.status.toUpperCase()}
+                            </span>
+                          </div>
+
+                          <p className="text-gray-600 text-sm mb-2">{request.description}</p>
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-500">Proposed by:</span>
+                              <p className="font-medium">{request.proposedBy}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500">Department:</span>
+                              <p className="font-medium">{request.department}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500">Expected Members:</span>
+                              <p className="font-medium">{request.expectedMembers}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500">Proposed Date:</span>
+                              <p className="font-medium">{request.proposedDate}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedRequest(request)
+                              setShowRequestDetails(true)
+                            }}
+                            className="px-4 py-2 border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50"
+                          >
+                            View Details
+                          </button>
+                          {request.status === 'pending' && (
+                            <>
+                              <button
+                                onClick={() => handleApproveRequest(request.id)}
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedRequest(request)
+                                  setShowRejectionModal(true)
+                                }}
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'participation' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Participation Analytics</h2>
+                <div className="flex gap-2">
+                  <select
+                    value={dateRange}
+                    onChange={(e) => setDateRange(e.target.value)}
+                    className="px-3 py-2 border rounded-lg"
+                  >
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="semester">This Semester</option>
+                    <option value="year">This Year</option>
+                  </select>
+                  <button
+                    onClick={() => setShowExportModal(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg flex items-center gap-2"
+                  >
+                    <FiDownload /> Export Report
+                  </button>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <p className="text-sm text-gray-500">Total Registrations</p>
-                  <p className="text-3xl font-bold text-gray-900">{participationData.totalRegistrations}</p>
-                  <p className="text-xs text-green-600 mt-2">↑ 12% from last month</p>
+                <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white">
+                  <p className="text-purple-100">Total Participants</p>
+                  <p className="text-3xl font-bold">{participationData.students.participated}</p>
+                  <p className="text-sm text-purple-100 mt-2">
+                    {participationData.students.participationRate}% of total students
+                  </p>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <p className="text-sm text-gray-500">Active Participants</p>
-                  <p className="text-3xl font-bold text-gray-900">{participationData.activeParticipants}</p>
-                  <p className="text-xs text-green-600 mt-2">Out of {participationStats.totalStudents} students</p>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-gray-500">Active Clubs</p>
+                  <p className="text-3xl font-bold text-purple-600">{participationData.clubs.activeClubs}</p>
+                  <p className="text-sm text-green-600 mt-2">↑ {participationData.clubs.monthlyGrowth}% growth</p>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <p className="text-sm text-gray-500">Avg Events/Student</p>
-                  <p className="text-3xl font-bold text-gray-900">{participationData.avgEventsPerStudent}</p>
-                  <p className="text-xs text-gray-500 mt-2">Across all categories</p>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-gray-500">Total Events</p>
+                  <p className="text-3xl font-bold text-purple-600">{participationData.events.totalRegistrations}</p>
+                  <p className="text-sm text-gray-500 mt-2">{participationData.events.completedEvents} completed</p>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <p className="text-sm text-gray-500">Completion Rate</p>
-                  <p className="text-3xl font-bold text-gray-900">{participationData.completionRate}%</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                    <div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${participationData.completionRate}%` }}></div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <p className="text-gray-500">Avg. Attendance</p>
+                  <p className="text-3xl font-bold text-purple-600">{participationData.events.avgAttendance}%</p>
+                  <p className="text-sm text-gray-500 mt-2">across all events</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <h3 className="text-lg font-semibold mb-4">Club-wise Participation</h3>
+                  <div className="space-y-4">
+                    {participationData.clubs.clubWiseParticipation.map((club, idx) => (
+                      <div key={idx}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>{club.name}</span>
+                          <span className="font-medium">{club.participation}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full"
+                            style={{ width: `${club.participation}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>{club.members} members</span>
+                          <span>{club.events} events</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <h3 className="text-lg font-semibold mb-4">Event Attendance Rates</h3>
+                  <div className="space-y-4">
+                    {participationData.events.eventWiseParticipation.map((event, idx) => (
+                      <div key={idx}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>{event.name}</span>
+                          <span className="font-medium">{event.rate}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-green-500 to-teal-500 h-2 rounded-full"
+                            style={{ width: `${event.rate}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>{event.attended} attended</span>
+                          <span>{event.registrations} registered</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {participationView === 'overview' && (
-                <>
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Participation by Category</h3>
-                    <div className="space-y-4">
-                      {participationData.categoryStats.map((stat) => (
-                        <div key={stat.category}>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="font-medium text-gray-700">{stat.category}</span>
-                            <span className="text-gray-600">{stat.registrations} registrations • {stat.students} students</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full"
-                              style={{ width: `${(stat.registrations / participationData.totalRegistrations) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h3 className="text-lg font-semibold mb-4">Top Participants</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4">Student</th>
+                        <th className="text-left py-3 px-4">Activities</th>
+                        <th className="text-left py-3 px-4">Clubs</th>
+                        <th className="text-left py-3 px-4">Hours</th>
+                        <th className="text-left py-3 px-4">Achievements</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {participationData.students.topParticipants.map((student, idx) => (
+                        <tr key={idx} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-4 font-medium">{student.name}</td>
+                          <td className="py-3 px-4">{student.activities}</td>
+                          <td className="py-3 px-4">{student.clubs}</td>
+                          <td className="py-3 px-4">{student.hours}</td>
+                          <td className="py-3 px-4">
+                            <span className="bg-purple-100 text-purple-600 px-2 py-1 rounded-full text-xs">
+                              Top Performer
+                            </span>
+                          </td>
+                        </tr>
                       ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Registration Trends</h3>
-                    <div className="h-64 flex items-end justify-between gap-2">
-                      {participationData.monthlyTrends.map((month) => (
-                        <div key={month.month} className="flex-1 flex flex-col items-center">
-                          <div
-                            className="w-full bg-gradient-to-t from-purple-600 to-pink-600 rounded-t-lg"
-                            style={{ height: `${(month.registrations / 100) * 200}px` }}
-                          ></div>
-                          <span className="text-xs text-gray-500 mt-2">{month.month}</span>
-                          <span className="text-xs font-medium text-gray-700">{month.registrations}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Active Students</h3>
-                    <div className="space-y-3">
-                      {participationData.topParticipants.map((student, index) => (
-                        <div
-                          key={student.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                          onClick={() => handleViewStudentParticipation(student)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                              index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-amber-600' : 'bg-purple-600'
-                            }`}>
-                              {index + 1}
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900">{student.name}</p>
-                              <p className="text-xs text-gray-500">{student.events} events • {student.categories.join(', ')}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xs text-gray-400">Last active</p>
-                            <p className="text-sm font-medium text-gray-700">{student.lastActive}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {participationView === 'details' && (
-                <>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900">Recent Registrations</h3>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {participationData.recentRegistrations.map((reg) => (
-                            <tr key={reg.id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4">
-                                <span className="font-medium text-gray-900">{reg.student}</span>
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-600">{reg.event}</td>
-                              <td className="px-6 py-4 text-sm text-gray-600">{reg.date}</td>
-                              <td className="px-6 py-4">
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                  reg.status === 'confirmed' ? 'bg-green-100 text-green-600' :
-                                  reg.status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
-                                  'bg-red-100 text-red-600'
-                                }`}>
-                                  {reg.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4">
-                                <button className="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                                  View
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">All Students Participation</h3>
-                    <div className="space-y-4">
-                      {users.filter(u => u.userType === 'student').map((student) => (
-                        <div key={student.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <img src={student.avatar} alt={student.name} className="w-10 h-10 rounded-full object-cover" />
-                            <div>
-                              <p className="font-medium text-gray-900">{student.name}</p>
-                              <p className="text-xs text-gray-500">{student.college} • {student.year}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-6">
-                            <div className="text-center">
-                              <p className="text-sm text-gray-500">Events</p>
-                              <p className="text-lg font-bold text-purple-600">{student.activities}</p>
-                            </div>
-                            <div className="w-32">
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full"
-                                  style={{ width: `${(student.activities / 20) * 100}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => handleViewStudentParticipation(student)}
-                              className="px-3 py-1.5 text-sm bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200"
-                            >
-                              View Details
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {participationView === 'analytics' && (
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Participation Rate</h3>
-                    <div className="flex items-center justify-center">
-                      <div className="relative w-48 h-48">
-                        <svg className="w-full h-full" viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" strokeWidth="10" />
-                          <circle
-                            cx="50"
-                            cy="50"
-                            r="40"
-                            fill="none"
-                            stroke="url(#gradient)"
-                            strokeWidth="10"
-                            strokeDasharray={`${participationStroke} ${participationCircle - participationStroke}`}
-                            strokeDashoffset={participationOffset}
-                            strokeLinecap="round"
-                          />
-                          <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                              <stop offset="0%" stopColor="#9333ea" />
-                              <stop offset="100%" stopColor="#ec4899" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-center">
-                            <p className="text-3xl font-bold text-gray-900">{participationStats.participationRate}%</p>
-                            <p className="text-xs text-gray-500">Participation</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
-                    <div className="space-y-3">
-                      {participationData.categoryStats.map((stat) => (
-                        <div key={stat.category} className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{stat.category}</span>
-                          <span className="text-sm font-medium text-gray-900">
-                            {Math.round((stat.registrations / participationData.totalRegistrations) * 100)}%
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl shadow-sm p-6 col-span-2">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Metrics</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center p-4 bg-purple-50 rounded-xl">
-                        <p className="text-2xl font-bold text-purple-600">45</p>
-                        <p className="text-xs text-gray-600">Active This Week</p>
-                      </div>
-                      <div className="text-center p-4 bg-pink-50 rounded-xl">
-                        <p className="text-2xl font-bold text-pink-600">82</p>
-                        <p className="text-xs text-gray-600">Active This Month</p>
-                      </div>
-                      <div className="text-center p-4 bg-green-50 rounded-xl">
-                        <p className="text-2xl font-bold text-green-600">156</p>
-                        <p className="text-xs text-gray-600">Total Registrations</p>
-                      </div>
-                      <div className="text-center p-4 bg-yellow-50 rounded-xl">
-                        <p className="text-2xl font-bold text-yellow-600">12</p>
-                        <p className="text-xs text-gray-600">New This Week</p>
-                      </div>
-                    </div>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
-              )}
+              </div>
+
+              <AnimatePresence>
+                {showExportModal && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+                    onClick={() => setShowExportModal(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0.9 }}
+                      className="bg-white rounded-xl p-6 max-w-md w-full"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <h3 className="text-xl font-bold mb-4">Export Participation Report</h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Report Type</label>
+                          <select className="w-full px-3 py-2 border rounded-lg">
+                            <option>Full Participation Report</option>
+                            <option>Club-wise Summary</option>
+                            <option>Event-wise Summary</option>
+                            <option>Student-wise Report</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Date Range</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <input type="date" className="px-3 py-2 border rounded-lg" />
+                            <input type="date" className="px-3 py-2 border rounded-lg" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Format</label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name="format"
+                                value="csv"
+                                checked={exportFormat === 'csv'}
+                                onChange={(e) => setExportFormat(e.target.value)}
+                              />
+                              CSV
+                            </label>
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name="format"
+                                value="pdf"
+                                checked={exportFormat === 'pdf'}
+                                onChange={(e) => setExportFormat(e.target.value)}
+                              />
+                              PDF
+                            </label>
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name="format"
+                                value="excel"
+                                checked={exportFormat === 'excel'}
+                                onChange={(e) => setExportFormat(e.target.value)}
+                              />
+                              Excel
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                          <button
+                            onClick={() => setShowExportModal(false)}
+                            className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => {
+                              toast.success('Report exported successfully!')
+                              setShowExportModal(false)
+                            }}
+                            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                          >
+                            Export
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {activeTab === 'clubs' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Manage Clubs</h2>
+                <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm">
+                  {clubs.length} Clubs
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {clubs.map((club) => (
+                  <div key={club.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className={`bg-gradient-to-r ${club.color} p-4 text-white`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{club.image}</span>
+                          <h3 className="text-lg font-semibold">{club.name}</h3>
+                        </div>
+                        <span className="bg-white/20 px-2 py-1 rounded-full text-xs uppercase">{club.status}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-2 text-sm">
+                      <p className="text-gray-600">{club.description}</p>
+                      <p><span className="text-gray-500">Category:</span> <span className="font-medium">{club.category}</span></p>
+                      <p><span className="text-gray-500">Advisor:</span> <span className="font-medium">{club.advisor}</span></p>
+                      <p><span className="text-gray-500">Members:</span> <span className="font-medium">{club.memberCount}</span></p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -2541,7 +2964,7 @@ const AdminDashboard = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Admin Email</label>
                     <input 
                       type="email" 
-                      defaultValue="admin@kluniversity.ac.in" 
+                      defaultValue="admin@example.com" 
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 text-gray-900 placeholder-gray-400"
                     />
                   </div>
@@ -2605,75 +3028,106 @@ const AdminDashboard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
             onClick={() => setShowRequestDetails(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Request Details</h3>
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold">{selectedRequest.clubName}</h2>
+                    <p className="text-gray-500">Proposed by {selectedRequest.proposedBy}</p>
+                  </div>
                   <button
                     onClick={() => setShowRequestDetails(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="text-gray-400 hover:text-gray-600"
                   >
-                    <FiX className="w-5 h-5" />
+                    ✕
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-gray-500">Type</p>
-                    <p className="text-sm font-medium text-gray-900 capitalize">{selectedRequest.type}</p>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Student ID</p>
+                      <p className="font-medium">{selectedRequest.studentId}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Department</p>
+                      <p className="font-medium">{selectedRequest.department}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Year</p>
+                      <p className="font-medium">{selectedRequest.year}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-500">Email</p>
+                      <p className="font-medium">{selectedRequest.email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Name</p>
-                    <p className="text-sm font-medium text-gray-900">{selectedRequest.name}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Submitted Date</p>
-                    <p className="text-sm text-gray-700">{selectedRequest.submittedDate}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Requested By</p>
-                    <p className="text-sm text-gray-700">{selectedRequest.requestedBy}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Summary</p>
-                    <p className="text-sm text-gray-700">{selectedRequest.summary}</p>
-                  </div>
-                </div>
 
-                <div className="flex justify-end gap-2 mt-6">
-                  <button
-                    onClick={() => setShowRequestDetails(false)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50"
-                  >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleRejectWithReason(selectedRequest)
-                      setShowRequestDetails(false)
-                    }}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                  >
-                    Reject
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleApprove(selectedRequest)
-                      setShowRequestDetails(false)
-                    }}
-                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-md"
-                  >
-                    Approve
-                  </button>
+                  <div>
+                    <h3 className="font-semibold mb-2">Description</h3>
+                    <p className="text-gray-600">{selectedRequest.description}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Reason for Establishment</h3>
+                    <p className="text-gray-600">{selectedRequest.reason}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Documents</h3>
+                    <div className="space-y-2">
+                      {selectedRequest.documents.map((doc, idx) => (
+                        <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                          <FiFileText className="text-gray-400" />
+                          <span className="text-sm">{doc}</span>
+                          <button className="ml-auto text-purple-600 hover:text-purple-700">
+                            <FiDownload />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Comments/Feedback</h3>
+                    <textarea
+                      placeholder="Add your comments here..."
+                      className="w-full px-3 py-2 border rounded-lg"
+                      rows="3"
+                    ></textarea>
+                  </div>
+
+                  {selectedRequest.status === 'pending' && (
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={() => {
+                          handleApproveRequest(selectedRequest.id)
+                          setShowRequestDetails(false)
+                        }}
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      >
+                        Approve Request
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowRequestDetails(false)
+                          setShowRejectionModal(true)
+                        }}
+                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                      >
+                        Reject Request
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -2682,113 +3136,52 @@ const AdminDashboard = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showParticipationModal && selectedStudent && (
+        {showRejectionModal && selectedRequest && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-            onClick={() => setShowParticipationModal(false)}
+            onClick={() => setShowRejectionModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white rounded-xl max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white sticky top-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={selectedStudent.avatar}
-                      alt={selectedStudent.name}
-                      className="w-12 h-12 rounded-full border-2 border-white"
-                    />
-                    <div>
-                      <h3 className="text-xl font-bold">{selectedStudent.name}</h3>
-                      <p className="text-purple-100 text-sm">{selectedStudent.email}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setShowParticipationModal(false)}
-                    className="text-white/80 hover:text-white"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
+              <h3 className="text-xl font-bold mb-4">Reject Club Request</h3>
 
-              <div className="p-6 space-y-6">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-purple-50 rounded-xl">
-                    <p className="text-2xl font-bold text-purple-600">{selectedStudent.activities}</p>
-                    <p className="text-xs text-gray-600">Total Events</p>
-                  </div>
-                  <div className="text-center p-4 bg-pink-50 rounded-xl">
-                    <p className="text-2xl font-bold text-pink-600">
-                      {events.filter(e => e.status !== 'completed').slice(0, selectedStudent.activities).length}
-                    </p>
-                    <p className="text-xs text-gray-600">Upcoming</p>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-xl">
-                    <p className="text-2xl font-bold text-green-600">
-                      {Math.max(0, selectedStudent.activities - events.filter(e => e.status !== 'completed').slice(0, selectedStudent.activities).length)}
-                    </p>
-                    <p className="text-xs text-gray-600">Completed</p>
-                  </div>
-                </div>
+              <p className="text-gray-600 mb-4">
+                Please provide a reason for rejecting "{selectedRequest.clubName}"
+              </p>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Categories Participated</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {['Technology', 'Business', 'Music'].map((cat, i) => (
-                      <span key={i} className="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">
-                        {cat}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Enter rejection reason..."
+                className="w-full px-3 py-2 border rounded-lg mb-4"
+                rows="4"
+              ></textarea>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Registered Events</h4>
-                  <div className="space-y-3">
-                    {events.slice(0, 5).map((event) => (
-                      <div key={event.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white">
-                            <FiCalendar className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{event.name}</p>
-                            <p className="text-xs text-gray-500">{event.date}</p>
-                          </div>
-                        </div>
-                        <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
-                          Registered
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Participation Timeline</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <p className="text-sm text-gray-600">Joined: {selectedStudent.joined}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <p className="text-sm text-gray-600">First event: 2 weeks after joining</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                      <p className="text-sm text-gray-600">Most active in: Technology category</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRejectionModal(false)}
+                  className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    handleRejectRequest(selectedRequest.id, rejectionReason)
+                    setShowRejectionModal(false)
+                    setRejectionReason('')
+                  }}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                  Confirm Rejection
+                </button>
               </div>
             </motion.div>
           </motion.div>
@@ -2825,6 +3218,17 @@ const AdminDashboard = () => {
 
                 {activeTab === 'users' && (
                   <div className="space-y-4">
+                    {(() => {
+                      const userHistory = getUserEventHistory(currentItem.id)
+                      const participatedCount = userHistory.filter(item => item.action === 'Participated').length
+                      const registeredCount = userHistory.filter(item => item.action === 'Registered').length
+                      const participatedEvents = userHistory.filter(item => item.action === 'Participated')
+                      const registeredEvents = userHistory.filter(item => item.action === 'Registered')
+                      const totalHours = userHistory.reduce((sum, item) => sum + (item.hours || 0), 0)
+                      const certificates = userHistory.filter(item => item.certificate).length
+
+                      return (
+                        <>
                     <div className="flex items-center gap-4">
                       <img src={currentItem.avatar} alt={currentItem.name} className="w-20 h-20 rounded-full object-cover" />
                       <div>
@@ -2854,6 +3258,97 @@ const AdminDashboard = () => {
                       <p className="text-sm text-gray-500 mb-1">Bio</p>
                       <p className="text-gray-700">{currentItem.bio}</p>
                     </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                      <div className="bg-purple-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500">Total Events</p>
+                        <p className="text-lg font-bold text-purple-600">{userHistory.length}</p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500">Registered</p>
+                        <p className="text-lg font-bold text-blue-600">{registeredCount}</p>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500">Participated</p>
+                        <p className="text-lg font-bold text-green-600">{participatedCount}</p>
+                      </div>
+                      <div className="bg-pink-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500">Certificates</p>
+                        <p className="text-lg font-bold text-pink-600">{certificates}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-sm font-semibold text-gray-900">Event Participation History</h5>
+                        <span className="text-xs text-gray-500">{totalHours}h contribution</span>
+                      </div>
+
+                      {userHistory.length > 0 ? (
+                        <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
+                          {userHistory.map((item) => (
+                            <div key={item.id} className="bg-white border border-gray-100 rounded-lg p-3">
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-900">{item.eventName}</p>
+                                  <p className="text-xs text-gray-500 mt-1">{item.category} • {item.date} • {item.role}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs px-2 py-1 rounded-full ${item.action === 'Participated' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                                    {item.action}
+                                  </span>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'Completed' ? 'bg-purple-100 text-purple-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                                    {item.status}
+                                  </span>
+                                  {item.certificate && (
+                                    <span className="text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-600">Certificate</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500">No event registrations or participation records available.</p>
+                      )}
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-blue-50 rounded-xl p-4">
+                        <h5 className="text-sm font-semibold text-blue-700 mb-2">Registered Events ({registeredEvents.length})</h5>
+                        {registeredEvents.length > 0 ? (
+                          <div className="space-y-2">
+                            {registeredEvents.map((item) => (
+                              <div key={item.id} className="bg-white border border-blue-100 rounded-lg p-2">
+                                <p className="text-sm font-medium text-gray-900">{item.eventName}</p>
+                                <p className="text-xs text-gray-500">{item.date} • {item.role}</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-500">No registered events.</p>
+                        )}
+                      </div>
+
+                      <div className="bg-green-50 rounded-xl p-4">
+                        <h5 className="text-sm font-semibold text-green-700 mb-2">Participated Events ({participatedEvents.length})</h5>
+                        {participatedEvents.length > 0 ? (
+                          <div className="space-y-2">
+                            {participatedEvents.map((item) => (
+                              <div key={item.id} className="bg-white border border-green-100 rounded-lg p-2">
+                                <p className="text-sm font-medium text-gray-900">{item.eventName}</p>
+                                <p className="text-xs text-gray-500">{item.date} • {item.hours}h • {item.role}</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-500">No participated events.</p>
+                        )}
+                      </div>
+                    </div>
+                        </>
+                      )
+                    })()}
                   </div>
                 )}
 

@@ -149,26 +149,6 @@ const Login = () => {
             ))}
           </div>
 
-          {/* Testimonial */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100"
-          >
-            <p className="text-gray-600 italic mb-4">
-              "ClubConnect transformed my career path. I found my dream internship through their network."
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold">
-                SJ
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Sarah Johnson</p>
-                <p className="text-sm text-gray-500">Student at KL University</p>
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
 
         {/* Right Side - Login Form */}

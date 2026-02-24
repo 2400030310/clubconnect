@@ -66,6 +66,80 @@ const StudentDashboard = () => {
   const [selectMode, setSelectMode] = useState(false)
   const [showEventDetailsModal, setShowEventDetailsModal] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
+  const [myParticipationData] = useState([
+    {
+      id: 1,
+      eventName: 'KL University Tech Fest 2024',
+      category: 'Technology',
+      joinedOn: '2024-02-26',
+      date: '2024-03-15',
+      role: 'Participant',
+      hours: 6,
+      status: 'Completed',
+      certificate: true,
+      contribution: 'Built an IoT prototype and presented in demo showcase'
+    },
+    {
+      id: 2,
+      eventName: 'AI & Robotics Hackathon',
+      category: 'Technology',
+      joinedOn: '2024-03-01',
+      date: '2024-03-18',
+      role: 'Team Member',
+      hours: 12,
+      status: 'Completed',
+      certificate: true,
+      contribution: 'Developed ML model for predictive analytics challenge'
+    },
+    {
+      id: 3,
+      eventName: 'Startup India Pitch Fest',
+      category: 'Business',
+      joinedOn: '2024-04-10',
+      date: '2024-05-02',
+      role: 'Presenter',
+      hours: 4,
+      status: 'Upcoming',
+      certificate: false,
+      contribution: 'Preparing investor pitch deck and product roadmap'
+    },
+    {
+      id: 4,
+      eventName: 'Inter-KL University Sports Meet',
+      category: 'Sports',
+      joinedOn: '2024-03-28',
+      date: '2024-04-20',
+      role: 'Volunteer',
+      hours: 5,
+      status: 'Completed',
+      certificate: true,
+      contribution: 'Coordinated track events and participant management'
+    },
+    {
+      id: 5,
+      eventName: 'Google Cloud Summit',
+      category: 'Technology',
+      joinedOn: '2024-03-12',
+      date: '2024-04-05',
+      role: 'Attendee',
+      hours: 7,
+      status: 'Completed',
+      certificate: true,
+      contribution: 'Completed cloud labs and earned hands-on badge'
+    },
+    {
+      id: 6,
+      eventName: 'Young Entrepreneurs Summit',
+      category: 'Business',
+      joinedOn: '2024-04-15',
+      date: '2024-05-20',
+      role: 'Delegate',
+      hours: 6,
+      status: 'Upcoming',
+      certificate: false,
+      contribution: 'Networking with founders and startup mentors'
+    }
+  ])
 
   const [showRegistrationForm, setShowRegistrationForm] = useState(false)
   const [eventToRegister, setEventToRegister] = useState(null)
@@ -138,6 +212,7 @@ const StudentDashboard = () => {
       type: 'reminder'
     }
   ])
+  const [hasLoadedExtraNotifications, setHasLoadedExtraNotifications] = useState(false)
 
   const [allEvents, setAllEvents] = useState([
     {
@@ -148,7 +223,7 @@ const StudentDashboard = () => {
       time: '10:00 AM',
       location: 'Guntur',
       spots: 5000,
-      registered: false,
+      registered: true,
       selected: false,
       icon: <FiCpu className="w-6 h-6" />,
       color: 'from-purple-500 to-pink-500',
@@ -166,7 +241,7 @@ const StudentDashboard = () => {
       time: '9:00 AM',
       location: 'Guntur',
       spots: 200,
-      registered: false,
+      registered: true,
       selected: false,
       icon: <FiCpu className="w-6 h-6" />,
       color: 'from-pink-500 to-purple-500',
@@ -184,7 +259,7 @@ const StudentDashboard = () => {
       time: '10:00 AM',
       location: 'Guntur',
       spots: 1000,
-      registered: false,
+      registered: true,
       selected: false,
       icon: <FiCloud className="w-6 h-6" />,
       color: 'from-purple-500 to-pink-500',
@@ -290,7 +365,7 @@ const StudentDashboard = () => {
       time: '10:00 AM',
       location: 'Guntur',
       spots: 500,
-      registered: false,
+      registered: true,
       selected: false,
       icon: <FiTrendingUp className="w-6 h-6" />,
       color: 'from-pink-500 to-purple-500',
@@ -441,6 +516,44 @@ const StudentDashboard = () => {
   ])
 
   const [myRegistrations, setMyRegistrations] = useState(allEvents.filter(event => event.registered))
+  const [clubs, setClubs] = useState([
+    {
+      id: 1,
+      name: 'Coding Club',
+      description: 'Learn, code, innovate - Join the coding revolution',
+      category: 'Technical',
+      memberCount: 250,
+      image: '💻',
+      color: 'from-blue-500 to-purple-500',
+      isMember: false,
+      events: [1, 2]
+    },
+    {
+      id: 2,
+      name: 'Music Club',
+      description: 'Explore your musical talents',
+      category: 'Cultural',
+      memberCount: 180,
+      image: '🎵',
+      color: 'from-pink-500 to-red-500',
+      isMember: true,
+      events: [4, 5]
+    },
+    {
+      id: 3,
+      name: 'Sports Club',
+      description: 'Stay active and competitive',
+      category: 'Sports',
+      memberCount: 320,
+      image: '⚽',
+      color: 'from-green-500 to-emerald-500',
+      isMember: false,
+      events: [7, 8]
+    }
+  ])
+  const [myClubs, setMyClubs] = useState(clubs.filter(club => club.isMember))
+  const [selectedClub, setSelectedClub] = useState(null)
+  const [showClubDetails, setShowClubDetails] = useState(false)
 
   const careerData = {
     activitySkills: {
@@ -673,6 +786,10 @@ const StudentDashboard = () => {
   })
 
   const categories = ['all', ...new Set(allEvents.map(event => event.category))]
+  const completedParticipation = myParticipationData.filter(item => item.status === 'Completed')
+  const upcomingParticipation = myParticipationData.filter(item => item.status === 'Upcoming')
+  const totalParticipationHours = myParticipationData.reduce((acc, item) => acc + item.hours, 0)
+  const certificatesEarned = myParticipationData.filter(item => item.certificate).length
 
   const [stats] = useState({
     totalActivities: allEvents.length,
@@ -694,6 +811,39 @@ const StudentDashboard = () => {
   }
 
   const openNotifications = () => {
+    if (!hasLoadedExtraNotifications) {
+      const extraNotifications = [
+        {
+          id: Date.now() + 1,
+          title: 'Workshop Reminder',
+          message: 'Cloud Computing workshop starts in 2 hours at Seminar Hall 2.',
+          time: 'Just now',
+          read: false,
+          type: 'reminder'
+        },
+        {
+          id: Date.now() + 2,
+          title: 'Certificate Available',
+          message: 'Your certificate for AI & Robotics Hackathon is now available to download.',
+          time: 'Just now',
+          read: false,
+          type: 'success'
+        },
+        {
+          id: Date.now() + 3,
+          title: 'New Club Event',
+          message: 'Coding Club added a new event: Competitive Programming Bootcamp.',
+          time: 'Just now',
+          read: false,
+          type: 'event'
+        }
+      ]
+
+      setNotifications(prev => [...extraNotifications, ...prev])
+      setHasLoadedExtraNotifications(true)
+      toast.success('New notifications loaded')
+    }
+
     notificationsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
@@ -718,6 +868,35 @@ const StudentDashboard = () => {
     setAllEvents(prev => prev.map(event => event.id === eventId ? { ...event, registered: false } : event))
     setMyRegistrations(prev => prev.filter(reg => reg.id !== eventId))
     toast.success('Unregistered successfully!')
+  }
+
+  const handleJoinClub = (clubId) => {
+    const joinedClub = clubs.find(club => club.id === clubId)
+    if (!joinedClub || joinedClub.isMember) return
+
+    setClubs(prev => prev.map(club => club.id === clubId
+      ? { ...club, isMember: true, memberCount: club.memberCount + 1 }
+      : club
+    ))
+
+    toast.success(`Successfully joined ${joinedClub.name}!`)
+  }
+
+  const handleLeaveClub = (clubId) => {
+    const leavingClub = clubs.find(club => club.id === clubId)
+    if (!leavingClub || !leavingClub.isMember) return
+
+    setClubs(prev => prev.map(club => club.id === clubId
+      ? { ...club, isMember: false, memberCount: Math.max(0, club.memberCount - 1) }
+      : club
+    ))
+
+    toast.success('Left club successfully')
+  }
+
+  const handleViewClubDetails = (club) => {
+    setSelectedClub(club)
+    setShowClubDetails(true)
   }
 
   const handleViewEventDetails = (event) => {
@@ -963,6 +1142,16 @@ const StudentDashboard = () => {
     localStorage.setItem('recommendationView', recommendationView)
   }, [recommendationView])
 
+  useEffect(() => {
+    setMyClubs(clubs.filter(club => club.isMember))
+    if (selectedClub) {
+      const updatedClub = clubs.find(club => club.id === selectedClub.id)
+      if (updatedClub) {
+        setSelectedClub(updatedClub)
+      }
+    }
+  }, [clubs])
+
   const analyzeCareerReadiness = () => {
     const myActivities = myRegistrations.map(reg => reg.name)
 
@@ -1196,7 +1385,7 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white text-black [&_.text-gray-900]:text-black [&_.text-gray-800]:text-black [&_.text-gray-700]:text-black [&_.text-gray-600]:text-black [&_.text-gray-500]:text-black [&_.text-gray-400]:text-black [&_.hover\\:text-gray-800:hover]:text-black [&_.hover\\:text-gray-700:hover]:text-black [&_.hover\\:text-gray-600:hover]:text-black">
       <nav className="bg-white/80 backdrop-blur-md border-b border-purple-100 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
@@ -1300,6 +1489,9 @@ const StudentDashboard = () => {
         <div className="mb-6 border-b border-gray-200">
           <div className="flex space-x-8 overflow-x-auto pb-1">
             <button onClick={() => setActiveTab('overview')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${activeTab === 'overview' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>Overview</button>
+            <button onClick={() => setActiveTab('participation')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${activeTab === 'participation' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>
+              <FiCheckCircle className="w-4 h-4" /> My Participation
+            </button>
             <button onClick={() => setActiveTab('catalog')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${activeTab === 'catalog' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>Activity Catalog</button>
             <button onClick={() => setActiveTab('skills')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${activeTab === 'skills' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>
               <FiAward className="w-4 h-4" /> My Skills
@@ -1312,6 +1504,10 @@ const StudentDashboard = () => {
             <button onClick={() => setActiveTab('recommendations')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${activeTab === 'recommendations' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>
               <FiStar className="w-4 h-4" /> Smart Recs
               {myRegistrations.length > 0 && analyzeCareerReadiness().careerMatches.length > 0 && <span className="ml-1 bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded-full">{analyzeSkillGaps(analyzeCareerReadiness().careerMatches[0]).totalGaps} gaps</span>}
+            </button>
+            <button onClick={() => setActiveTab('clubs')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${activeTab === 'clubs' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>
+              <FiUsers className="w-4 h-4" /> Clubs
+              {myClubs.length > 0 && <span className="ml-1 bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded-full">{myClubs.length}</span>}
             </button>
           </div>
         </div>
@@ -1601,6 +1797,99 @@ const StudentDashboard = () => {
               </motion.div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'participation' && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-xl p-5 shadow-lg border border-purple-100">
+                <p className="text-xs text-gray-500">Events Joined</p>
+                <p className="text-2xl font-bold text-purple-600 mt-1">{myRegistrations.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 shadow-lg border border-purple-100">
+                <p className="text-xs text-gray-500">Participation Records</p>
+                <p className="text-2xl font-bold text-purple-600 mt-1">{myParticipationData.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 shadow-lg border border-purple-100">
+                <p className="text-xs text-gray-500">Completed</p>
+                <p className="text-2xl font-bold text-green-600 mt-1">{completedParticipation.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 shadow-lg border border-purple-100">
+                <p className="text-xs text-gray-500">Certificates Earned</p>
+                <p className="text-2xl font-bold text-blue-600 mt-1">{certificatesEarned}</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <FiCheckCircle className="text-purple-600" />
+                  Events You Joined
+                </h2>
+                <span className="bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full">
+                  {myRegistrations.length} Active
+                </span>
+              </div>
+
+              {myRegistrations.length > 0 ? (
+                <div className="space-y-3">
+                  {myRegistrations.map((event) => (
+                    <div key={event.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{event.name}</h3>
+                          <p className="text-sm text-gray-500 mt-1">{event.category} • {event.date} • {event.time}</p>
+                          <p className="text-xs text-gray-500 mt-1">{event.location} • {event.organizer}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-600">{event.price}</span>
+                          <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600">Joined</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">No joined events yet.</div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <FiActivity className="text-purple-600" />
+                  My Participation
+                </h2>
+                <span className="bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full">
+                  {myParticipationData.length} Records
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {myParticipationData.map((item) => (
+                  <div key={item.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{item.eventName}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{item.category} • Role: {item.role}</p>
+                        <p className="text-xs text-gray-500 mt-1">Joined: {item.joinedOn} • Event Date: {item.date}</p>
+                        <p className="text-xs text-gray-600 mt-1">{item.contribution}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-600">{item.hours}h</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'Completed' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                          {item.status}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${item.certificate ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
+                          {item.certificate ? 'Certificate' : 'No Certificate'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         )}
 
         {activeTab === 'skills' && myRegistrations.length > 0 && (
@@ -2182,7 +2471,130 @@ const StudentDashboard = () => {
           </motion.div>
         )}
 
-        {activeTab !== 'catalog' && activeTab !== 'overview' && activeTab !== 'recommendations' && myRegistrations.length === 0 && (
+        {activeTab === 'clubs' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    <FiUsers className="text-purple-600" />
+                    University Clubs
+                  </h2>
+                  <p className="text-gray-500 text-sm">Join clubs and connect with like-minded students</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm bg-purple-100 text-purple-600 px-3 py-1 rounded-full">
+                    {clubs.length} Active Clubs
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {clubs.map((club, index) => (
+                  <motion.div
+                    key={club.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group bg-gradient-to-br from-gray-50 to-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all cursor-pointer"
+                    onClick={() => handleViewClubDetails(club)}
+                  >
+                    <div className={`bg-gradient-to-r ${club.color} p-4 text-white`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-4xl">{club.image}</span>
+                        {club.isMember && (
+                          <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs">
+                            Member
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-xl font-bold mt-2">{club.name}</h3>
+                      <p className="text-white/80 text-xs mt-1">{club.category}</p>
+                    </div>
+
+                    <div className="p-4">
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">{club.description}</p>
+
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div className="flex items-center gap-1">
+                          <FiUsers className="w-4 h-4" />
+                          <span>{club.memberCount} members</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FiCalendar className="w-4 h-4" />
+                          <span>{club.events?.length || 0} events</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleViewClubDetails(club)
+                          }}
+                          className="flex-1 px-3 py-2 border border-purple-200 text-purple-600 rounded-lg text-sm font-medium hover:bg-purple-50"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            club.isMember ? handleLeaveClub(club.id) : handleJoinClub(club.id)
+                          }}
+                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium ${
+                            club.isMember
+                              ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                              : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md'
+                          }`}
+                        >
+                          {club.isMember ? 'Leave' : 'Join'}
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {myClubs.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-xl p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <FiHeart className="text-pink-500" />
+                  My Clubs ({myClubs.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {myClubs.map((club, index) => (
+                    <motion.div
+                      key={club.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl cursor-pointer hover:shadow-md"
+                      onClick={() => handleViewClubDetails(club)}
+                    >
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${club.color} flex items-center justify-center text-2xl text-white`}>
+                        {club.image}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">{club.name}</h4>
+                        <p className="text-xs text-gray-500">{club.memberCount} members</p>
+                      </div>
+                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                        Member
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {activeTab !== 'catalog' && activeTab !== 'overview' && activeTab !== 'participation' && activeTab !== 'recommendations' && activeTab !== 'clubs' && myRegistrations.length === 0 && (
           <div className="text-center py-12 bg-white rounded-2xl shadow-xl">
             <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
               {activeTab === 'skills' && <FiAward className="w-8 h-8 text-purple-600" />}
@@ -2711,6 +3123,104 @@ const StudentDashboard = () => {
                     className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-md transition-all"
                   >
                     Submit Suggestion
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showClubDetails && selectedClub && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowClubDetails(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={`bg-gradient-to-r ${selectedClub.color} p-6 text-white sticky top-0`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-5xl">{selectedClub.image}</span>
+                    <div>
+                      <h3 className="text-2xl font-bold">{selectedClub.name}</h3>
+                      <p className="text-white/80 text-sm mt-1">{selectedClub.category}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowClubDetails(false)}
+                    className="text-white/80 hover:text-white"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <p className="text-gray-700">{selectedClub.description}</p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <p className="text-xs text-gray-500">Members</p>
+                    <p className="text-xl font-bold text-gray-900">{selectedClub.memberCount}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <p className="text-xs text-gray-500">Events</p>
+                    <p className="text-xl font-bold text-gray-900">{selectedClub.events?.length || 0}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Club Events</h4>
+                  <div className="space-y-2">
+                    {allEvents
+                      .filter(event => selectedClub.events?.includes(event.id))
+                      .map(event => (
+                        <div key={event.id} className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
+                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${event.color} flex items-center justify-center text-white text-xs`}>
+                            {event.icon}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-900">{event.name}</p>
+                            <p className="text-xs text-gray-500">{event.date}</p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setShowClubDetails(false)}
+                    className="flex-1 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (selectedClub.isMember) {
+                        handleLeaveClub(selectedClub.id)
+                      } else {
+                        handleJoinClub(selectedClub.id)
+                      }
+                      setShowClubDetails(false)
+                    }}
+                    className={`flex-1 px-4 py-2 rounded-lg font-medium ${
+                      selectedClub.isMember
+                        ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                        : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md'
+                    }`}
+                  >
+                    {selectedClub.isMember ? 'Leave Club' : 'Join Club'}
                   </button>
                 </div>
               </div>
