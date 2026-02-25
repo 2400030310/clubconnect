@@ -51,6 +51,17 @@ import {
   FiSave,
   FiX
 } from 'react-icons/fi'
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  BarChart,
+  Bar
+} from 'recharts'
 import { useAuth } from '../hooks/useAuth'
 import toast from 'react-hot-toast'
 
@@ -646,6 +657,42 @@ const AdminDashboard = () => {
     pendingApprovals: pendingApprovals.length,
     pendingReports: reports.filter(r => r.status === 'pending').length
   }
+
+  const monthlyUserBuckets = {}
+  ;[...users]
+    .filter(userItem => userItem.joined)
+    .sort((firstUser, secondUser) => new Date(firstUser.joined) - new Date(secondUser.joined))
+    .forEach((userItem) => {
+      const joinedDate = new Date(userItem.joined)
+      const monthKey = `${joinedDate.getFullYear()}-${String(joinedDate.getMonth() + 1).padStart(2, '0')}`
+
+      if (!monthlyUserBuckets[monthKey]) {
+        monthlyUserBuckets[monthKey] = {
+          month: joinedDate.toLocaleString('en-US', { month: 'short' }),
+          newUsers: 0
+        }
+      }
+
+      monthlyUserBuckets[monthKey].newUsers += 1
+    })
+
+  const userGrowthData = Object.keys(monthlyUserBuckets)
+    .sort()
+    .map((monthKey) => ({ ...monthlyUserBuckets[monthKey] }))
+
+  let cumulativeUsers = 0
+  userGrowthData.forEach((monthItem) => {
+    cumulativeUsers += monthItem.newUsers
+    monthItem.totalUsers = cumulativeUsers
+  })
+
+  const eventsByCategoryData = Object.entries(
+    events.reduce((accumulator, eventItem) => {
+      const category = eventItem.category || 'Other'
+      accumulator[category] = (accumulator[category] || 0) + 1
+      return accumulator
+    }, {})
+  ).map(([category, count]) => ({ category, count }))
 
   // Handlers
   const handleLogout = () => {
@@ -1654,15 +1701,76 @@ const AdminDashboard = () => {
               <div className="grid lg:grid-cols-2 gap-6">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">User Growth</h3>
-                  <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                    <p className="text-gray-400">📊 User growth chart will appear here</p>
+                  <div className="h-64 bg-gray-50 rounded-lg p-3">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={userGrowthData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                        <XAxis
+                          dataKey="month"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <YAxis
+                          allowDecimals={false}
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            borderRadius: '0.75rem',
+                            border: '1px solid hsl(var(--border))'
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="totalUsers"
+                          name="Total Users"
+                          stroke="hsl(var(--primary))"
+                          strokeWidth={3}
+                          dot={{ r: 3, fill: 'hsl(var(--primary))' }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="newUsers"
+                          name="New Users"
+                          stroke="hsl(var(--accent))"
+                          strokeWidth={2}
+                          dot={{ r: 2, fill: 'hsl(var(--accent))' }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Events by Category</h3>
-                  <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                    <p className="text-gray-400">📊 Events distribution chart will appear here</p>
+                  <div className="h-64 bg-gray-50 rounded-lg p-3">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={eventsByCategoryData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                        <XAxis
+                          dataKey="category"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <YAxis
+                          allowDecimals={false}
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            borderRadius: '0.75rem',
+                            border: '1px solid hsl(var(--border))'
+                          }}
+                        />
+                        <Bar dataKey="count" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </div>

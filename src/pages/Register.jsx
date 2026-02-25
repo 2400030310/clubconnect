@@ -58,7 +58,7 @@ const Register = () => {
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-start">
         {/* Left Side - Benefits */}
         <motion.div
@@ -72,7 +72,7 @@ const Register = () => {
               Join the
             </h1>
             <h2 className="text-5xl font-bold">
-              <span className="bg-gradient-to-r from-[#06B6D4] to-[#0891b2] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 ClubConnect
               </span>
             </h2>
@@ -91,11 +91,6 @@ const Register = () => {
                 icon: '🎯',
                 title: 'Personalized Recommendations',
                 description: 'Get matched with opportunities that fit your goals'
-              },
-              {
-                icon: '🌐',
-                title: 'Global Network',
-                description: 'Connect with peers from 30+ countries'
               },
               {
                 icon: '📈',
@@ -124,21 +119,6 @@ const Register = () => {
             ))}
           </div>
 
-          {/* Trust Indicators */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-100"
-          >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex -space-x-2">
-                {[1,2,3,4].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-[#06B6D4] to-[#0891b2] border-2 border-white" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
 
         {/* Right Side - Registration Form */}
@@ -160,7 +140,7 @@ const Register = () => {
                 <div className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                     currentStep >= step
-                      ? 'bg-gradient-to-r from-[#06B6D4] to-[#0891b2] text-white'
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                       : 'bg-gray-100 text-gray-400'
                   }`}>
                     {step}
@@ -173,7 +153,7 @@ const Register = () => {
                 </div>
                 {step === 1 && (
                   <div className={`flex-1 h-px mx-4 ${
-                    currentStep > 1 ? 'bg-gradient-to-r from-[#06B6D4] to-[#0891b2]' : 'bg-gray-200'
+                    currentStep > 1 ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gray-200'
                   }`} />
                 )}
               </React.Fragment>
@@ -202,7 +182,7 @@ const Register = () => {
                       value={formData.fullName}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-gray-900 placeholder-gray-400"
                       required
                     />
                   </div>
@@ -221,7 +201,7 @@ const Register = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="you@example.com"
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-gray-900 placeholder-gray-400"
                       required
                     />
                   </div>
@@ -240,7 +220,7 @@ const Register = () => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-gray-900 placeholder-gray-400"
                       required
                     />
                     <button
@@ -266,7 +246,7 @@ const Register = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-gray-900 placeholder-gray-400"
                       required
                     />
                     <button
@@ -285,7 +265,7 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-full bg-gradient-to-r from-[#06B6D4] to-[#0891b2] text-white py-3 rounded-lg font-medium hover:shadow-lg hover:shadow-[#06B6D4]/20 transition-all duration-300 flex items-center justify-center gap-2 group"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-600/30 transition-all duration-300 flex items-center justify-center gap-2 group"
                 >
                   Continue
                   <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -314,7 +294,7 @@ const Register = () => {
                       value={formData.institution}
                       onChange={handleChange}
                       placeholder="Stanford University"
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-gray-900 placeholder-gray-400"
                       required
                     />
                   </div>
@@ -331,7 +311,7 @@ const Register = () => {
                       name="graduationYear"
                       value={formData.graduationYear}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] transition-all appearance-none bg-white text-gray-900"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all appearance-none bg-white text-gray-900"
                       required
                     >
                       <option value="" className="text-gray-500">Select year</option>
@@ -350,14 +330,14 @@ const Register = () => {
                       name="agreeTerms"
                       checked={formData.agreeTerms}
                       onChange={handleChange}
-                      className="mt-1 w-4 h-4 rounded border-gray-300 text-[#06B6D4] focus:ring-[#06B6D4]"
+                      className="mt-1 w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       required
                     />
                     <span className="text-sm text-gray-700">
                       I agree to the{' '}
-                      <Link to="/terms" className="text-[#06B6D4] hover:underline">Terms of Service</Link>
+                      <Link to="/terms" className="text-purple-600 hover:underline">Terms of Service</Link>
                       {' '}and{' '}
-                      <Link to="/privacy" className="text-[#06B6D4] hover:underline">Privacy Policy</Link>
+                      <Link to="/privacy" className="text-purple-600 hover:underline">Privacy Policy</Link>
                     </span>
                   </label>
                 </div>
@@ -373,7 +353,7 @@ const Register = () => {
                   <button
                     type="submit"
                     disabled={isLoading || !formData.agreeTerms}
-                    className="flex-1 bg-gradient-to-r from-[#06B6D4] to-[#0891b2] text-white py-3 rounded-lg font-medium hover:shadow-lg hover:shadow-[#06B6D4]/20 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-600/30 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
                       <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -393,7 +373,7 @@ const Register = () => {
               Already have an account?{' '}
               <Link 
                 to="/login" 
-                className="text-[#06B6D4] hover:text-[#0891b2] font-medium hover:underline"
+                className="text-purple-600 hover:text-purple-700 font-medium hover:underline"
               >
                 Sign in
               </Link>

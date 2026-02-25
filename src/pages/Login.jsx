@@ -130,7 +130,6 @@ const Login = () => {
           <div className="space-y-4">
             {[
               'Access exclusive industry events',
-              'Connect with 50,000+ professionals',
               'Track your career milestones',
               formData.userType === 'admin' ? 'Manage students and activities' : 'Get personalized recommendations'
             ].map((item, index) => (
