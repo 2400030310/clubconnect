@@ -56,7 +56,7 @@ import toast from 'react-hot-toast'
 const StudentDashboard = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState('profile')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [viewMode, setViewMode] = useState('grid')
@@ -799,6 +799,25 @@ const StudentDashboard = () => {
     trendingActivities: allEvents.filter(a => a.trending).length
   })
 
+  const studentProfile = {
+    name: user?.name || 'Priya Sharma',
+    email: user?.email || 'priya.sharma@kluniversity.ac.in',
+    department: 'B.Tech Computer Science',
+    year: '3rd Year',
+    location: 'Guntur Campus',
+    headline: 'Aspiring Product Engineer & Community Builder',
+    bio: 'Passionate about building real-world tech solutions, leading student initiatives, and growing through hackathons, workshops, and innovation challenges.',
+    profileCompletion: 92,
+    campusRank: 'Top 8% Active Learners',
+    strengths: ['Problem Solving', 'Team Leadership', 'Public Speaking', 'Rapid Prototyping'],
+    goals: ['Win a national hackathon', 'Publish 2 tech projects this semester', 'Mentor juniors in coding club'],
+    achievements: [
+      '🏆 Finalist - AI & Robotics Hackathon 2024',
+      '🎤 Speaker - Student Innovation Meetup',
+      '✅ 5 Certifications in Cloud & AI'
+    ]
+  }
+
   const handleLogout = () => {
     logout()
     navigate('/')
@@ -1488,7 +1507,7 @@ const StudentDashboard = () => {
 
         <div className="mb-6 border-b border-gray-200">
           <div className="flex space-x-8 overflow-x-auto pb-1">
-            <button onClick={() => setActiveTab('overview')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${activeTab === 'overview' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>Overview</button>
+            <button onClick={() => setActiveTab('profile')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap ${activeTab === 'profile' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>My Profile</button>
             <button onClick={() => setActiveTab('participation')} className={`pb-3 px-1 font-medium text-sm transition-colors relative whitespace-nowrap flex items-center gap-2 ${activeTab === 'participation' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500 hover:text-gray-700'}`}>
               <FiCheckCircle className="w-4 h-4" /> My Participation
             </button>
@@ -2594,7 +2613,7 @@ const StudentDashboard = () => {
           </motion.div>
         )}
 
-        {activeTab !== 'catalog' && activeTab !== 'overview' && activeTab !== 'participation' && activeTab !== 'recommendations' && activeTab !== 'clubs' && myRegistrations.length === 0 && (
+        {activeTab !== 'catalog' && activeTab !== 'profile' && activeTab !== 'participation' && activeTab !== 'recommendations' && activeTab !== 'clubs' && myRegistrations.length === 0 && (
           <div className="text-center py-12 bg-white rounded-2xl shadow-xl">
             <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
               {activeTab === 'skills' && <FiAward className="w-8 h-8 text-purple-600" />}
@@ -2607,20 +2626,79 @@ const StudentDashboard = () => {
           </div>
         )}
 
-        {activeTab === 'overview' && (
+        {activeTab === 'profile' && (
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-xl p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Welcome to Your Dashboard</h2>
-                <p className="text-gray-600">Track your activities, develop skills, and discover career paths.</p>
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  <div className="bg-purple-50 rounded-xl p-4">
-                    <p className="text-sm text-gray-600">Total Activities</p>
-                    <p className="text-2xl font-bold text-purple-600">{stats.totalActivities}</p>
+              <div className="bg-white rounded-2xl shadow-xl p-6 border border-purple-100">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-2xl font-bold">
+                      {studentProfile.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">{studentProfile.name}</h2>
+                      <p className="text-sm text-gray-600">{studentProfile.headline}</p>
+                      <p className="text-xs text-gray-500 mt-1">{studentProfile.department} • {studentProfile.year}</p>
+                      <p className="text-xs text-gray-500">{studentProfile.email} • {studentProfile.location}</p>
+                    </div>
                   </div>
-                  <div className="bg-pink-50 rounded-xl p-4">
-                    <p className="text-sm text-gray-600">Your Registrations</p>
-                    <p className="text-2xl font-bold text-pink-600">{stats.myRegistrations}</p>
+
+                  <div className="bg-purple-50 rounded-xl px-4 py-3 border border-purple-100">
+                    <p className="text-xs text-gray-500">Profile Completion</p>
+                    <p className="text-xl font-bold text-purple-600">{studentProfile.profileCompletion}%</p>
+                    <p className="text-xs text-purple-600 font-medium mt-1">{studentProfile.campusRank}</p>
+                  </div>
+                </div>
+
+                <p className="text-gray-600 mb-5 leading-relaxed">{studentProfile.bio}</p>
+
+                <div className="grid sm:grid-cols-3 gap-3 mb-5">
+                  <div className="rounded-xl bg-purple-50 p-3">
+                    <p className="text-xs text-gray-500">Activities Joined</p>
+                    <p className="text-xl font-bold text-purple-600">{stats.myRegistrations}</p>
+                  </div>
+                  <div className="rounded-xl bg-pink-50 p-3">
+                    <p className="text-xs text-gray-500">Certificates Earned</p>
+                    <p className="text-xl font-bold text-pink-600">{certificatesEarned}</p>
+                  </div>
+                  <div className="rounded-xl bg-purple-50 p-3">
+                    <p className="text-xs text-gray-500">Participation Hours</p>
+                    <p className="text-xl font-bold text-purple-600">{totalParticipationHours}h</p>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="rounded-xl border border-gray-100 p-4 bg-gray-50">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <FiTarget className="text-purple-600" /> Current Goals
+                    </h3>
+                    <div className="space-y-2">
+                      {studentProfile.goals.map((goal) => (
+                        <p key={goal} className="text-xs text-gray-600">• {goal}</p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-gray-100 p-4 bg-gray-50">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <FiAward className="text-pink-600" /> Core Strengths
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {studentProfile.strengths.map((strength) => (
+                        <span key={strength} className="text-xs bg-white border border-purple-100 text-purple-700 px-2.5 py-1 rounded-full">
+                          {strength}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 p-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">Recent Achievements</h3>
+                  <div className="space-y-1.5">
+                    {studentProfile.achievements.map((achievement) => (
+                      <p key={achievement} className="text-sm text-gray-700">{achievement}</p>
+                    ))}
                   </div>
                 </div>
               </div>
