@@ -1265,6 +1265,7 @@ const AdminDashboard = () => {
       ]
     },
     events: {
+      totalEvents: 40,
       totalRegistrations: 3450,
       completedEvents: 28,
       upcomingEvents: 12,
@@ -2569,7 +2570,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <p className="text-gray-500">Total Events</p>
-                  <p className="text-3xl font-bold text-purple-600">{participationData.events.totalRegistrations}</p>
+                  <p className="text-2xl font-bold text-purple-600">{participationData.events.totalEvents}</p>
                   <p className="text-sm text-gray-500 mt-2">{participationData.events.completedEvents} completed</p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">

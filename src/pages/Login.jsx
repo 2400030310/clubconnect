@@ -124,7 +124,7 @@ const Login = () => {
           </div>
 
           <p className="text-gray-600 text-lg leading-relaxed mb-8">
-            Continue your journey of professional growth and connect with ambitious students and administrators worldwide.
+            Continue your journey of professional growth and connect with ambitious students and administrators.
           </p>
 
           <div className="space-y-4">

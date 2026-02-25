@@ -308,7 +308,6 @@ const Home = () => {
               <span className="text-3xl font-black tracking-tight text-black">
                 ClubConnect
               </span>
-              <span className="ml-2 text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">🇮🇳</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -469,15 +468,13 @@ const Home = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="inline-block mr-2"
               >
-                🇮🇳
               </motion.span>
-              India's Premier Student Platform
+              College's Premier Student Platform
               <motion.span
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="inline-block ml-2"
               >
-                🇮🇳
               </motion.span>
             </motion.p>
 

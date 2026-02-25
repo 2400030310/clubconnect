@@ -544,7 +544,7 @@ const Communities = () => {
             {/* Filter Toggle for Mobile */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 text-gray-700 font-medium"
+              className="lg:hidden flex items-center gap-2 text-black font-medium"
             >
               <FiFilter className="w-5 h-5" />
               {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -556,7 +556,7 @@ const Communities = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 <option value="all">All Categories</option>
                 {categories.filter(c => c !== 'all').map(cat => (
@@ -567,7 +567,7 @@ const Communities = () => {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 <option value="all">All Cities</option>
                 {cities.filter(c => c !== 'all').map(city => (
@@ -578,7 +578,7 @@ const Communities = () => {
               {(selectedCategory !== 'all' || selectedCity !== 'all' || searchTerm) && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1"
+                  className="text-sm text-black hover:text-purple-600 flex items-center gap-1"
                 >
                   <FiX className="w-4 h-4" />
                   Clear Filters
@@ -588,7 +588,7 @@ const Communities = () => {
 
             {/* Results Count and View Toggle */}
             <div className="flex items-center gap-4 ml-auto">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-black">
                 {filteredCommunities.length} communities found
               </span>
               <div className="flex items-center gap-2 border-l pl-4">
@@ -698,14 +698,11 @@ const Communities = () => {
                           <span>{community.location}</span>
                         </div>
                         <button
-                          onClick={() => toggleJoin(community.id)}
                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                            joinedCommunities.includes(community.id)
-                              ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                              : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md'
+                            'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md'
                           }`}
                         >
-                          {joinedCommunities.includes(community.id) ? 'Joined ✓' : 'Join Community'}
+                          Join Community
                         </button>
                       </div>
                     </div>
@@ -737,14 +734,9 @@ const Communities = () => {
                           <p className="text-sm text-gray-500">{community.category} • {community.location}</p>
                         </div>
                         <button
-                          onClick={() => toggleJoin(community.id)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                            joinedCommunities.includes(community.id)
-                              ? 'bg-green-100 text-green-600'
-                              : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md'
-                          }`}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-md`}
                         >
-                          {joinedCommunities.includes(community.id) ? 'Joined' : 'Join'}
+                          Join
                         </button>
                       </div>
 

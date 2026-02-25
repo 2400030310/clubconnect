@@ -538,7 +538,7 @@ const Events = () => {
             {/* Filter Toggle for Mobile */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 text-gray-700 font-medium"
+              className="lg:hidden flex items-center gap-2 text-black font-medium"
             >
               <FiFilter className="w-5 h-5" />
               {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -550,7 +550,7 @@ const Events = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 <option value="all">All Categories</option>
                 {categories.filter(c => c !== 'all').map(cat => (
@@ -561,7 +561,7 @@ const Events = () => {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 <option value="all">All Cities</option>
                 {cities.filter(c => c !== 'all').map(city => (
@@ -572,7 +572,7 @@ const Events = () => {
               <select
                 value={selectedPrice}
                 onChange={(e) => setSelectedPrice(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 {priceRanges.map(range => (
                   <option key={range.value} value={range.value}>{range.label}</option>
@@ -582,7 +582,7 @@ const Events = () => {
               <select
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
               >
                 {dateRanges.map(range => (
                   <option key={range.value} value={range.value}>{range.label}</option>
@@ -592,7 +592,7 @@ const Events = () => {
               {(selectedCategory !== 'all' || selectedCity !== 'all' || selectedPrice !== 'all' || selectedDate !== 'all') && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-gray-500 hover:text-purple-600 flex items-center gap-1"
+                  className="text-sm text-black hover:text-purple-600 flex items-center gap-1"
                 >
                   <FiX className="w-4 h-4" />
                   Clear Filters
@@ -602,7 +602,7 @@ const Events = () => {
 
             {/* View Toggle and Results Count */}
             <div className="flex items-center gap-4 ml-auto">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-black">
                 {filteredEvents.length} events found
               </span>
               <div className="flex items-center gap-2 border-l pl-4">
